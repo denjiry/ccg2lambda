@@ -34,5 +34,23 @@ Theorem t1:
                          ((Nom e) = x))))
             True)).
   Set Firstorder Depth 1.
-  nltac.
+  (* Success *)
+  (* nltac. *)
+  (* Success *)
+  (* nltac_prove. *)
+  (* Ltac coqlib.nltac_prove := try (solve [ nltac_set; nltac_final | nltac_set_exch; nltac_final ]) *)
+  (* Ltac coqlib.nltac_set := *)
+  (* repeat *)
+  (*  (nltac_init; try repeat substitution; try exchange_equality; *)
+  (*    try repeat substitution; try eqlem_sub) *)
+  (* Ltac coqlib.nltac_final := try (solve [ repeat nltac_base | clear_pred; repeat nltac_base ]) *)
+  (* Success *)
+  (* nltac_set. *)
+  (* nltac_final. *)
+  (* Success *)
+  nltac_init.
+  nltac_final.
+
+  (*DANGER nltac_set_exch.
+   nltac_final. *)
 Qed.
