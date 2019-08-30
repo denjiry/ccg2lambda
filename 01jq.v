@@ -57,13 +57,18 @@ Theorem t1:
   (* nltac_base. *)
   (* Ltac coqlib.nltac_base := *)
   (*  try nltac_init; try (eauto; eexists; firstorder); try (subst; eauto; firstorder; try congruence) *)
-  nltac_init.
+  (* Ltac coqlib.nltac_init := try (intuition; try solve_false; firstorder; repeat subst; firstorder) *)
+  (* Success *)
+  (* nltac_init. *)
+  intuition. firstorder. subst.
   (* nltac_base. *)
   eexists. firstorder. eauto. firstorder.
   (* nltac_base. *)
   eexists. firstorder. eauto. firstorder.
   (* nltac_base. *)
   eexists. firstorder. eauto. firstorder. congruence.
-  (*DANGER nltac_set_exch.
+
+
+(*DANGER nltac_set_exch.
    nltac_final. *)
 Qed.
