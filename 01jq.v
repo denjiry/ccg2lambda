@@ -48,9 +48,22 @@ Theorem t1:
   (* nltac_set. *)
   (* nltac_final. *)
   (* Success *)
-  nltac_init.
-  nltac_final.
+  (* nltac_init. *)
+  (* nltac_final. *)
 
+  (* Success *)
+  (* nltac_base. *)
+  (* nltac_base. *)
+  (* nltac_base. *)
+  (* Ltac coqlib.nltac_base := *)
+  (*  try nltac_init; try (eauto; eexists; firstorder); try (subst; eauto; firstorder; try congruence) *)
+  nltac_init.
+  (* nltac_base. *)
+  eexists. firstorder. eauto. firstorder.
+  (* nltac_base. *)
+  eexists. firstorder. eauto. firstorder.
+  (* nltac_base. *)
+  eexists. firstorder. eauto. firstorder. congruence.
   (*DANGER nltac_set_exch.
    nltac_final. *)
 Qed.
