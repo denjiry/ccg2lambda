@@ -35,7 +35,4 @@ Theorem t1:
             True)).
   Set Firstorder Depth 1.
   nltac.
-  (* nltac_set; nltac_final. *)
-  (* Set Firstorder Depth 3. *)
-  (* nltac_final. *)
 Qed.
