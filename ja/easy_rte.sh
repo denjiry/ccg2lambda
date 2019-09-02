@@ -36,10 +36,10 @@
 # $ cat jigg_location.txt
 #   /home/pasmargo/software/jigg
 
-USAGE="Usage: ./ja/rte_ja.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./ja/easy_rte.sh <sentences.txt>"
 
 # Check that the number of arguments is correct.
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 1 ]; then
   echo "Error: Number of arguments invalid".
   echo $USAGE
   exit 1
@@ -55,7 +55,7 @@ if [ ! -f $sentences_fname ]; then
 fi
 
 # This variable contains the filename where the category templates are.
-category_templates=$2
+category_templates="ja/semantic_templates_ja_emnlp2016.yaml"
 if [ ! -f $category_templates ]; then
   echo "Error: File with semantic templates does not exist."
   echo $USAGE
