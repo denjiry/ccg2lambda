@@ -11,7 +11,7 @@ Theorem t1 :forall x, (_花(x)
                             ->
                             (_嫌う(e) /\ (Nom(e) = _アリス) /\ (Acc(e)=x))))
                     \/
-                    exists e, (_嫌う(e) /\ (Nom(e) = _アリス) /\ (Acc(e)=x))
+                    exists e, (_好き(e) /\ (Nom(e) = _アリス) /\ (Acc(e)=x))
                   )).
 Proof.
 Admitted.
