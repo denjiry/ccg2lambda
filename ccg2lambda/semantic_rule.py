@@ -19,9 +19,9 @@ import re
 
 from nltk.sem.logic import Expression
 
-from category import Category
-from logic_parser import lexpr
-from normalization import normalize_token
+from ccg2lambda.category import Category
+from ccg2lambda.logic_parser import lexpr
+from ccg2lambda.normalization import normalize_token
 
 class SemanticRule(object):
     def __init__(self, category, semantics, attributes = {}):

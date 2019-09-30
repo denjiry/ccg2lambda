@@ -19,11 +19,11 @@ from lxml import etree
 import simplejson
 import yaml
 
-from category import Category
-from etree_utils import get_node_at_path
-from logic_parser import lexpr
-from normalization import normalize_token
-from semantic_rule import SemanticRule
+from ccg2lambda.category import Category
+from ccg2lambda.etree_utils import get_node_at_path
+from ccg2lambda.logic_parser import lexpr
+from ccg2lambda.normalization import normalize_token
+from ccg2lambda.semantic_rule import SemanticRule
 
 class SemanticIndex(object):
     def __init__(self, contents):
