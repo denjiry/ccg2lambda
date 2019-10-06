@@ -55,13 +55,13 @@ def _prove(txtfilename):
     assert Path(txtfilename).exists(), txtfilename+" does not exists."
     cp = run(["python", "scripts/prove.py",
               txtfilename+".sem.xml",
-              txtfilename+".sem.xml"],
+              "--graph_out", txtfilename+".prove.html"],
              capture_output=True)
     stdout = cp.stdout.decode()
     stderr = cp.stderr.decode()
     # print("stdout:", stdout)
     # print("stderr first 50 characters: ", [:50])
-    assert stdout in ["yes", "no", "unknown"]
+    assert stdout.rstrip("\n") in ["yes", "no", "unknown"]
     return
 
 
@@ -70,3 +70,4 @@ if __name__ == '__main__':
     _jiggparse(filename)
     _semparse(filename)
     _visualize(filename)
+    _prove(filename)
