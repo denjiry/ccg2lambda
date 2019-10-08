@@ -70,4 +70,4 @@ if __name__ == '__main__':
     _jiggparse(filename)
     _semparse(filename)
     _visualize(filename)
-    _prove(filename)
+    _prove('pr'+filename)
