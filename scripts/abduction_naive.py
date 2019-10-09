@@ -18,9 +18,9 @@
 from subprocess import Popen
 import subprocess
 
-from abduction_tools import insert_axioms_in_coq_script
-from knowledge import get_tokens_from_xml_node, get_lexical_relations_from_preds
-from semantic_tools import is_theorem_defined
+from .abduction_tools import insert_axioms_in_coq_script
+from .knowledge import get_tokens_from_xml_node, get_lexical_relations_from_preds
+from .semantic_tools import is_theorem_defined
 
 class AxiomsWordnet(object):
     """

@@ -29,8 +29,8 @@ import textwrap
 from tqdm import tqdm
 
 from pandas_ml import ConfusionMatrix
-from visualization_tools import convert_doc_to_mathml
-from visualization_tools import wrap_mathml_in_html
+from .visualization_tools import convert_doc_to_mathml
+from .visualization_tools import wrap_mathml_in_html
 
 def load_files(proof_fnames):
     """

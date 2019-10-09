@@ -4,7 +4,7 @@ from nltk.sem.logic import *
 import unicodedata
 
 from nltk.internals import Counter
-from logic_parser import lexpr
+from .logic_parser import lexpr
 
 class NCounter(Counter):
     def reset(self):

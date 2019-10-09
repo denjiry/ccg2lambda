@@ -26,7 +26,7 @@ import os
 import sys
 import textwrap
 
-from semparse import serialize_tree
+from .semparse import serialize_tree
 
 def relabel(root, label=None):
     if label is None:

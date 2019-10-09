@@ -17,11 +17,11 @@
 import logging
 import re
 
-from knowledge import get_lexical_relations
-from semantic_types import get_dynamic_library_from_doc
-from theorem import Theorem
-from theorem import MasterTheorem
-from theorem import get_formulas_from_doc
+from .knowledge import get_lexical_relations
+from .semantic_types import get_dynamic_library_from_doc
+from .theorem import Theorem
+from .theorem import MasterTheorem
+from .theorem import get_formulas_from_doc
 
 def build_knowledge_axioms(doc):
     if not doc:

@@ -23,8 +23,8 @@ import sys
 
 from nltk import Tree
 
-from normalization import denormalize_token
-from tree_tools import tree_or_string, tree_contains
+from .normalization import denormalize_token
+from .tree_tools import tree_or_string, tree_contains
 
 def find_final_subgoal_line_index(coq_output_lines):
     indices = [i for i, line in enumerate(coq_output_lines)

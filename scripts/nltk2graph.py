@@ -16,7 +16,7 @@
 
 from  collections import defaultdict
 from nltk.sem.logic import *
-from logic_parser import lexpr
+from .logic_parser import lexpr
 
 import networkx as nx
 

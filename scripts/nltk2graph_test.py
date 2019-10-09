@@ -19,11 +19,11 @@ import unittest
 
 import networkx as nx
 
-from logic_parser import lexpr
-from nltk2graph import formula_to_tree
-from nltk2graph import merge_leaf_nodes
-from nltk2graph import rename_nodes
-from nltk2graph import formula_to_graph
+from .logic_parser import lexpr
+from .nltk2graph import formula_to_tree
+from .nltk2graph import merge_leaf_nodes
+from .nltk2graph import rename_nodes
+from .nltk2graph import formula_to_graph
 
 # TODO: test Japanese characters.
 

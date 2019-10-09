@@ -17,9 +17,9 @@
 
 import unittest
 
-from coq_analyzer import get_tree_pred_args
-from coq_analyzer import get_premises_that_match_conclusion_args
-from tree_tools import tree_or_string
+from .coq_analyzer import get_tree_pred_args
+from .coq_analyzer import get_premises_that_match_conclusion_args
+from .tree_tools import tree_or_string
 
 class GetTreePredArgsTestCase(unittest.TestCase):
     def test_premise_one_var(self):

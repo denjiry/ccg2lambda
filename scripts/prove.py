@@ -29,10 +29,10 @@ from subprocess import TimeoutExpired
 import sys
 import textwrap
 
-from semantic_tools import prove_doc
-from semparse import serialize_tree
-from utils import time_count
-from visualization_tools import convert_root_to_mathml
+from .semantic_tools import prove_doc
+from .semparse import serialize_tree
+from .utils import time_count
+from .visualization_tools import convert_root_to_mathml
 
 ARGS=None
 DOCS=None
@@ -81,10 +81,10 @@ def main(args = None):
         sys.exit(1)
     
     if ARGS.abduction == "spsa":
-        from abduction_spsa import AxiomsWordnet
+        from .abduction_spsa import AxiomsWordnet
         ABDUCTION = AxiomsWordnet()
     elif ARGS.abduction == "naive":
-        from abduction_naive import AxiomsWordnet
+        from .abduction_naive import AxiomsWordnet
         ABDUCTION = AxiomsWordnet()
 
     parser = etree.XMLParser(remove_blank_text=True)

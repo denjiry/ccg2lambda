@@ -4,8 +4,8 @@ import logging
 import subprocess
 import sys
 
-from logic_parser import lexpr
-from nltk2graph import formula_to_graph
+from .logic_parser import lexpr
+from .nltk2graph import formula_to_graph
 
 import networkx as nx
 

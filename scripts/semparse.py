@@ -29,8 +29,8 @@ import textwrap
 
 from nltk.sem.logic import LogicalExpressionException
 
-from ccg2lambda_tools import assign_semantics_to_ccg
-from semantic_index import SemanticIndex
+from .ccg2lambda_tools import assign_semantics_to_ccg
+from .semantic_index import SemanticIndex
 
 SEMANTIC_INDEX=None
 ARGS=None

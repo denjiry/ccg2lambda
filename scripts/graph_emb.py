@@ -17,8 +17,8 @@
 import logging
 import numpy as np
 
-from gather import gather3
-from gather import gather_output_shape3
+from .gather import gather3
+from .gather import gather_output_shape3
 seed = 23
 np.random.seed(seed=seed)
 

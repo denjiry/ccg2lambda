@@ -20,9 +20,9 @@ import itertools
 import logging
 import numpy as np
 
-from nltk2graph import formula_to_graph
-from nltk2graph import get_label
-from nltk2graph import get_node_token
+from .nltk2graph import formula_to_graph
+from .nltk2graph import get_label
+from .nltk2graph import get_node_token
 
 import networkx as nx
 

@@ -17,8 +17,8 @@
 
 import unittest
 
-from logic_parser import lexpr
-from nltk2coq import normalize_interpretation
+from .logic_parser import lexpr
+from .nltk2coq import normalize_interpretation
 
 class Nltk2coqTestCase(unittest.TestCase):
     def test_predicate1_arg(self):

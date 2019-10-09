@@ -19,7 +19,7 @@ import unittest
 
 from lxml import etree
 
-from knowledge import get_lexical_relations
+from .knowledge import get_lexical_relations
 
 class LexicalRelationsTestCase(unittest.TestCase):
     def test_no_relation(self):

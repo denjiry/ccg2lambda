@@ -17,8 +17,8 @@
 
 import unittest
 
-from logic_parser import lexpr
-from semantic_tools import resolve_prefix_to_infix_operations
+from .logic_parser import lexpr
+from .semantic_tools import resolve_prefix_to_infix_operations
 
 class resolve_prefix_to_infix_operationsTestCase(unittest.TestCase):
     def test_entity_no_concat(self):

@@ -21,10 +21,10 @@ from lxml import etree
 import nltk
 from nltk.sem.logic import LogicalExpressionException
 
-from ccg2lambda_tools import assign_semantics_to_ccg
-from logic_parser import lexpr
-from semantic_index import SemanticIndex
-from semantic_index import SemanticRule
+from .ccg2lambda_tools import assign_semantics_to_ccg
+from .logic_parser import lexpr
+from .semantic_index import SemanticIndex
+from .semantic_index import SemanticRule
 
 # TODO: ensure that 'var_paths' is not matching attributes in CCG XML trees.
 class GetSemanticRepresentationTestCase(unittest.TestCase):

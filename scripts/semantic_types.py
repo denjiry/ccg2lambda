@@ -38,10 +38,10 @@ from nltk.sem.logic import InconsistentTypeHierarchyException
 from nltk.sem.logic import Variable
 from nltk.sem.logic import typecheck
 
-from knowledge import get_tokens_from_xml_node
-from logic_parser import lexpr
-from normalization import normalize_token, substitute_invalid_chars
-from tree_tools import tree_or_string
+from .knowledge import get_tokens_from_xml_node
+from .logic_parser import lexpr
+from .normalization import normalize_token, substitute_invalid_chars
+from .tree_tools import tree_or_string
 
 COQLIB_PATH='coqlib.v'
 def get_reserved_preds_from_coq_static_lib(coq_static_lib_path):

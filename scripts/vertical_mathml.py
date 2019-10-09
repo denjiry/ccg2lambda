@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from nltk.sem.logic import *
-from logic_parser import lexpr
+from .logic_parser import lexpr
 
 kSize = 1.0
 kColor = 'Black'

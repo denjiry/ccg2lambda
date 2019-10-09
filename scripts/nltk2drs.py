@@ -3,8 +3,8 @@
 import nltk
 from nltk.sem.drt import *
 
-from logic_parser import lexpr
-from nltk2normal import *
+from .logic_parser import lexpr
+from .nltk2normal import *
 
 dp = nltk.sem.DrtExpression.fromstring
 

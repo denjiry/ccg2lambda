@@ -17,9 +17,9 @@
 from collections import defaultdict
 import itertools
 
-from linguistic_tools import linguistic_relationship
-from linguistic_tools import get_wordnet_cascade
-from normalization import denormalize_token, normalize_token
+from .linguistic_tools import linguistic_relationship
+from .linguistic_tools import get_wordnet_cascade
+from .normalization import denormalize_token, normalize_token
 
 
 def get_tokens_from_xml_node(node):

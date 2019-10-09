@@ -28,7 +28,7 @@ import textwrap
 
 from pycorenlp import StanfordCoreNLP
 
-from semparse import serialize_tree
+from .semparse import serialize_tree
 
 # Requires to previously run Stanford 3.6.0 server from its own directory:
 # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000

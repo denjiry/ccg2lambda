@@ -8,10 +8,10 @@ import sys
 import textwrap
 
 from nltk.sem.drt import *
-from nltk2drs import convert_to_drs
-from nltk2normal import remove_true, rename
-from nltk2tptp import convert_to_tptp_proof
-from logic_parser import lexpr
+from .nltk2drs import convert_to_drs
+from .nltk2normal import remove_true, rename
+from .nltk2tptp import convert_to_tptp_proof
+from .logic_parser import lexpr
 
 ARGS=None
 DOCS=None

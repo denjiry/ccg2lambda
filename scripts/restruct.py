@@ -26,7 +26,7 @@ import os
 import sys
 import textwrap
 
-from semparse import serialize_tree
+from .semparse import serialize_tree
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\

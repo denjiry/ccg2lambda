@@ -22,11 +22,11 @@ import logging
 from lxml import etree
 import subprocess
 
-from coq_analyzer import analyze_coq_output
-from nltk2coq import normalize_interpretation
-from semantic_types import get_dynamic_library_from_doc
-from tactics import get_tactics
-from normalization import substitute_invalid_chars
+from .coq_analyzer import analyze_coq_output
+from .nltk2coq import normalize_interpretation
+from .semantic_types import get_dynamic_library_from_doc
+from .tactics import get_tactics
+from .normalization import substitute_invalid_chars
 
 class Theorem(object):
     """

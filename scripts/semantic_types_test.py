@@ -20,21 +20,21 @@ import unittest
 from lxml import etree
 from nltk.sem.logic import Variable, Expression
 
-from ccg2lambda_tools import assign_semantics_to_ccg
-from logic_parser import lexpr
-from semantic_index import SemanticIndex
-from semantic_index import SemanticRule
-from semantic_types import build_dynamic_library
-from semantic_types import build_library_entry
-from semantic_types import combine_signatures_or_rename_preds
-from semantic_types import convert_coq_signatures_to_nltk
-from semantic_types import convert_coq_to_nltk_type
-from semantic_types import get_coq_types
-from semantic_types import get_dynamic_library_from_doc
-from semantic_types import merge_dynamic_libraries
-from semantic_types import read_type
-from semparse import filter_attributes
-from theorem import get_formulas_from_doc
+from .ccg2lambda_tools import assign_semantics_to_ccg
+from .logic_parser import lexpr
+from .semantic_index import SemanticIndex
+from .semantic_index import SemanticRule
+from .semantic_types import build_dynamic_library
+from .semantic_types import build_library_entry
+from .semantic_types import combine_signatures_or_rename_preds
+from .semantic_types import convert_coq_signatures_to_nltk
+from .semantic_types import convert_coq_to_nltk_type
+from .semantic_types import get_coq_types
+from .semantic_types import get_dynamic_library_from_doc
+from .semantic_types import merge_dynamic_libraries
+from .semantic_types import read_type
+from .semparse import filter_attributes
+from .theorem import get_formulas_from_doc
 
 class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
 

@@ -17,15 +17,15 @@
 import logging
 import numpy as np
 
-from logic_parser import lexpr
-from graph_struct import GraphData
+from .logic_parser import lexpr
+from .graph_struct import GraphData
 seed = 23
 np.random.seed(seed=seed)
 
 from keras.models import Model
 from keras.layers.embeddings import Embedding
 
-from graph_emb import make_child_parent_branch
+from .graph_emb import make_child_parent_branch
 
 logging.basicConfig(level=logging.DEBUG)
 formulas_str = [

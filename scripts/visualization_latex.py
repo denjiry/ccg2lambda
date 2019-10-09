@@ -4,9 +4,9 @@
 import cgi
 import re
 
-from ccg2lambda_tools import build_ccg_tree
+from .ccg2lambda_tools import build_ccg_tree
 from lxml import etree
-from semantic_index import find_node_by_id
+from .semantic_index import find_node_by_id
 
 kUpwardsTree = True
 kDisplaySemantics = True

@@ -21,9 +21,9 @@ import sys
 
 from lxml import etree
 
-from ccg2lambda_tools import build_ccg_tree
-from knowledge import get_tokens_from_xml_node
-from semantic_index import find_node_by_id
+from .ccg2lambda_tools import build_ccg_tree
+from .knowledge import get_tokens_from_xml_node
+from .semantic_index import find_node_by_id
 
 kUpwardsTree = True
 kDisplaySemantics = True

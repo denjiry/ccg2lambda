@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from nltk.sem.logic import *
-from logic_parser import lexpr
-from nltk2normal import rename_variable, remove_true, rename
+from .logic_parser import lexpr
+from .nltk2normal import rename_variable, remove_true, rename
 
 def convert_to_tptp_proof(formulas):
     if len(formulas) == 1:

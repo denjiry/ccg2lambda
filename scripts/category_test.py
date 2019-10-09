@@ -17,7 +17,7 @@
 
 import unittest
 
-from category import Category
+from .category import Category
 
 class CategoryTestCase(unittest.TestCase):
     def test_category_matches(self):

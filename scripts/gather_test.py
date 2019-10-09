@@ -24,8 +24,8 @@ from keras.layers import Input
 from keras.layers.core import Lambda
 from keras.layers.embeddings import Embedding
 
-from gather_emb import gather3
-from gather_emb import gather_output_shape3
+from .gather_emb import gather3
+from .gather_emb import gather_output_shape3
 
 class GatherTestCase(unittest.TestCase):
     def setUp(self):

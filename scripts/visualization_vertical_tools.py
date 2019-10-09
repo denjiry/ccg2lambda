@@ -4,14 +4,14 @@
 import cgi
 import re
 
-from ccg2lambda_tools import build_ccg_tree
+from .ccg2lambda_tools import build_ccg_tree
 from lxml import etree
-from semantic_index import find_node_by_id
+from .semantic_index import find_node_by_id
 
 ## Conversion to vertical notation
 from nltk.sem.logic import *
-from logic_parser import lexpr
-from vertical_mathml import convert_to_vertical
+from .logic_parser import lexpr
+from .vertical_mathml import convert_to_vertical
 
 kUpwardsTree = True
 kDisplaySemantics = True
