@@ -3,6 +3,8 @@
 from subprocess import run
 from pathlib import Path
 
+from scripts.theorem import make_coq_script
+
 
 def _jiggparse(txtfilename):
     assert Path(txtfilename).exists()
