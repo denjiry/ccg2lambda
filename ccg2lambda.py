@@ -70,6 +70,6 @@ def _prove(txtfilename):
 if __name__ == '__main__':
     filename = 'tmp.txt'
     _jiggparse(filename)
-    _semparse(filename)
-    _visualize(filename)
-    _prove('pr'+filename)
+    # _semparse(filename)
+    # _visualize(filename)
+    # _prove('pr'+filename)
