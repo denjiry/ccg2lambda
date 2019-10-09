@@ -23,7 +23,7 @@ from nltk.sem.logic import ConstantExpression
 
 from .logic_parser import lexpr
 from .normalization import normalize_token
-import semantic_index
+from .semantic_index import find_node_by_id
 
 def build_ccg_tree(ccg_xml, root_id=None):
     """
@@ -34,7 +34,7 @@ def build_ccg_tree(ccg_xml, root_id=None):
         return None
     if root_id == None:
         root_id = ccg_xml.get('root')
-    root_span = copy.deepcopy(semantic_index.find_node_by_id(root_id, ccg_xml))
+    root_span = copy.deepcopy(find_node_by_id(root_id, ccg_xml))
     if 'child' not in root_span.attrib:
         return root_span
     children_id = root_span.get('child').split()
