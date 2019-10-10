@@ -22,7 +22,6 @@ import codecs
 import logging
 from lxml import etree
 from multiprocessing import Pool
-from multiprocessing import Lock
 import os
 import sys
 import textwrap
@@ -32,16 +31,9 @@ from nltk.sem.logic import LogicalExpressionException
 from .ccg2lambda_tools import assign_semantics_to_ccg
 from .semantic_index import SemanticIndex
 
-SEMANTIC_INDEX=None
-ARGS=None
-SENTENCES=None
-kMaxTasksPerChild=None
-lock = Lock()
 
 def main(args = None):
-    global SEMANTIC_INDEX
     global ARGS
-    global SENTENCES
     DESCRIPTION=textwrap.dedent("""\
             categories_template.yaml should contain the semantic templates
               in YAML format.
@@ -63,36 +55,34 @@ def main(args = None):
     parser.add_argument("ccg")
     parser.add_argument("templates")
     parser.add_argument("sem")
-    parser.add_argument("--arbi-types", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=True)
     parser.add_argument("--nbest", nargs='?', type=int, default="0")
-    parser.add_argument("--ncores", nargs='?', type=int, default="3",
-        help="Number of cores for multiprocessing.")
     ARGS = parser.parse_args()
-      
+
     if not os.path.exists(ARGS.templates):
         print('File does not exist: {0}'.format(ARGS.templates))
         sys.exit(1)
     if not os.path.exists(ARGS.ccg):
         print('File does not exist: {0}'.format(ARGS.ccg))
         sys.exit(1)
-    
+
     logging.basicConfig(level=logging.WARNING)
 
-    SEMANTIC_INDEX = SemanticIndex(ARGS.templates)
+    semantic_index = SemanticIndex(ARGS.templates)
 
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(ARGS.ccg, parser)
 
-    SENTENCES = root.findall('.//sentence')
-    # print('Found {0} sentences'.format(len(SENTENCES)))
+    sentences = root.findall('.//sentence')
+    # print('Found {0} sentences'.format(len(sentences)))
     # from pudb import set_trace; set_trace()
-    sentence_inds = range(len(SENTENCES))
-    sem_nodes_lists = semantic_parse_sentences(sentence_inds, ARGS.ncores)
-    assert len(sem_nodes_lists) == len(SENTENCES), \
-        'Element mismatch: {0} vs {1}'.format(len(sem_nodes_lists), len(SENTENCES))
+    sentence_inds = range(len(sentences))
+    sem_nodes_lists = semantic_parse_sentences(sentence_inds,
+                                               sentences, semantic_index)
+    assert len(sem_nodes_lists) == len(sentences), \
+        'Element mismatch: {0} vs {1}'.format(len(sem_nodes_lists), len(sentences))
     logging.info('Adding XML semantic nodes to sentences...')
-    for sentence, sem_nodes in zip(SENTENCES, sem_nodes_lists):
+    for sentence, sem_nodes in zip(sentences, sem_nodes_lists):
         sentence.extend(sem_nodes)
     logging.info('Finished adding XML semantic nodes to sentences.')
 
@@ -100,51 +90,43 @@ def main(args = None):
     with codecs.open(ARGS.sem, 'wb') as fout:
         fout.write(root_xml_str)
 
-def semantic_parse_sentences(sentence_inds, ncores=1):
-    if ncores <= 1:
-        sem_nodes_lists = semantic_parse_sentences_seq(sentence_inds)
-    else:
-        sem_nodes_lists = semantic_parse_sentences_par(sentence_inds, ncores)
+def semantic_parse_sentences(sentence_inds,
+                             sentences, semantic_index):
+    sem_nodes_lists = semantic_parse_sentences_seq(sentence_inds,
+                                                   sentences, semantic_index)
     sem_nodes_lists = [
         [etree.fromstring(s) for s in sem_nodes] for sem_nodes in sem_nodes_lists]
     return sem_nodes_lists
 
-def semantic_parse_sentences_par(sentence_inds, ncores=3):
-    pool = Pool(processes=ncores, maxtasksperchild=kMaxTasksPerChild)
-    sem_nodes = pool.map(semantic_parse_sentence, sentence_inds)
-    pool.close()
-    pool.join()
-    return sem_nodes
-
-def semantic_parse_sentences_seq(sentence_inds):
+def semantic_parse_sentences_seq(sentence_inds, sentences, semantic_index):
     sem_nodes = []
     for sentence_ind in sentence_inds:
-        sem_node = semantic_parse_sentence(sentence_ind)
+        sem_node = semantic_parse_sentence(sentence_ind,
+                                           sentences, semantic_index)
         sem_nodes.append(sem_node)
     return sem_nodes
 
-def semantic_parse_sentence(sentence_ind):
+def semantic_parse_sentence(sentence_ind, sentences, semantic_index, nbest=0):
     """
     `sentence` is an lxml tree with tokens and ccg nodes.
     It returns an lxml semantics node.
     """
-    global lock
-    sentence = SENTENCES[sentence_ind]
+    sentence = sentences[sentence_ind]
     sem_nodes = []
     # TODO: try to prevent semantic parsing for fragmented CCG trees.
     # Otherwise, produce fragmented semantics.
-    if ARGS.gold_trees:
-        # In xpath, elements are 1-indexed.
-        # However, gold_tree annotations assumed zero-index.
-        # This line fixes it.
-        tree_indices = [int(sentence.get('gold_tree', '0')) + 1]
-    if ARGS.nbest != 1:
-        tree_indices = get_tree_indices(sentence, ARGS.nbest)
-    for tree_index in tree_indices: 
+    # In xpath, elements are 1-indexed.
+    # However, gold_tree annotations assumed zero-index.
+    # This line fixes it.
+    tree_indices = [int(sentence.get('gold_tree', '0')) + 1]
+
+    if nbest != 1:
+        tree_indices = get_tree_indices(sentence, nbest)
+    for tree_index in tree_indices:
         sem_node = etree.Element('semantics')
         try:
             sem_tree = assign_semantics_to_ccg(
-                sentence, SEMANTIC_INDEX, tree_index)
+                sentence, semantic_index, tree_index)
             filter_attributes(sem_tree)
             sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
             sem_node.set('status', 'success')
@@ -158,11 +140,9 @@ def semantic_parse_sentence(sentence_ind):
             sem_node.set('status', 'failed')
             # from pudb import set_trace; set_trace()
             sentence_surf = ' '.join(sentence.xpath('tokens/token/@surf'))
-            lock.acquire()
             logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
                 e, sentence_surf,
                 etree.tostring(sentence, encoding='utf-8', pretty_print=True).decode('utf-8')))
-            lock.release()
             # print('x', end='', file=sys.stdout)
             sys.stdout.flush()
         sem_nodes.append(sem_node)
