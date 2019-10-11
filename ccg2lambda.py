@@ -15,10 +15,13 @@ from scripts.theorem import make_coq_script
 
 def _jiggparse(inputname, outname):
     assert Path(inputname).exists()
+    assert not Path(inputname).is_dir()
+    assert not Path(outname).is_dir()
     jigg_dir = "ja/jigg-v-0.4/jar/*"
     jigg = run(["java", "-Xmx4g", "-cp", jigg_dir, "jigg.pipeline.Pipeline",
                 "-annotators", "ssplit,kuromoji,ccg", "-ccg.kBest", "10",
-                "-file", inputname], capture_output=True)
+                "-file", inputname,
+                "-output", outname], capture_output=True)
     stdout = jigg.stdout.decode()
     stderr = jigg.stderr.decode()
     # print("stdout:", stdout)
