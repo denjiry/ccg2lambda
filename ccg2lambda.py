@@ -2,13 +2,12 @@
 # wrapper functions of ccg2lambda/scripts/
 from subprocess import run
 from pathlib import Path
-import codecs
 import logging
 from lxml import etree
 
 from scripts.semantic_index import SemanticIndex
-from scripts.semparse import (semantic_parse_sentences,
-                              serialize_tree)
+from scripts.semparse import semantic_parse_sentence
+from scripts.semantic_types import get_dynamic_library_from_doc
 
 from scripts.theorem import make_coq_script
 
@@ -43,18 +42,21 @@ def _semparse(inputname):
     root = etree.parse(inputname, parser)
 
     sentences = root.findall('.//sentence')
+    assert len(sentences) == 1
     # print('Found {0} sentences'.format(len(sentences)))
     # from pudb import set_trace; set_trace()
-    sentence_inds = range(len(sentences))
-    sem_nodes_lists = semantic_parse_sentences(sentence_inds,
-                                               sentences, semantic_index)
-    assert len(sem_nodes_lists) == len(sentences), \
-        'Element mismatch: {0} vs {1}'.format(len(sem_nodes_lists), len(sentences))
+    sentence = sentences[0]
+    sem_nodes_str_list = semantic_parse_sentence(sentence, semantic_index)
+    sem_nodes = [etree.fromstring(s) for s in sem_nodes_str_list]
     logging.info('Adding XML semantic nodes to sentences...')
-    for sentence, sem_nodes in zip(sentences, sem_nodes_lists):
-        sentence.extend(sem_nodes)
+    sentence.extend(sem_nodes)
     logging.info('Finished adding XML semantic nodes to sentences.')
-    return
+    # extract logic expressions
+    doc = root.xpath('./document')[0]
+    semantics = doc.xpath('./sentences/sentence/semantics')
+    dynamic_library_str, formulas = get_dynamic_library_from_doc(doc,
+                                                                 semantics)
+    return dynamic_library_str, formulas
 
 
 def _prove(txtfilename):
@@ -75,5 +77,5 @@ if __name__ == '__main__':
     txtname = 'tmp.txt'
     tmpccg = '/tmp/tmpccg.xml'
     _jiggparse(txtname, tmpccg)
-    _semparse(tmpccg)
+    dls, fml = _semparse(tmpccg)
     # _prove('pr'+filename)

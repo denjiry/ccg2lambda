@@ -101,17 +101,16 @@ def semantic_parse_sentences(sentence_inds,
 def semantic_parse_sentences_seq(sentence_inds, sentences, semantic_index):
     sem_nodes = []
     for sentence_ind in sentence_inds:
-        sem_node = semantic_parse_sentence(sentence_ind,
-                                           sentences, semantic_index)
+        sem_node = semantic_parse_sentence(sentences[sentence_ind],
+                                           semantic_index)
         sem_nodes.append(sem_node)
     return sem_nodes
 
-def semantic_parse_sentence(sentence_ind, sentences, semantic_index, nbest=0):
+def semantic_parse_sentence(sentence, semantic_index, nbest=0):
     """
     `sentence` is an lxml tree with tokens and ccg nodes.
     It returns an lxml semantics node.
     """
-    sentence = sentences[sentence_ind]
     sem_nodes = []
     # TODO: try to prevent semantic parsing for fragmented CCG trees.
     # Otherwise, produce fragmented semantics.
