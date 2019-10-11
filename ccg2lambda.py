@@ -13,34 +13,31 @@ from scripts.semparse import (semantic_parse_sentences,
 from scripts.theorem import make_coq_script
 
 
-def _jiggparse(txtfilename):
-    assert Path(txtfilename).exists()
+def _jiggparse(inputname, outname):
+    assert Path(inputname).exists()
     jigg_dir = "ja/jigg-v-0.4/jar/*"
     jigg = run(["java", "-Xmx4g", "-cp", jigg_dir, "jigg.pipeline.Pipeline",
                 "-annotators", "ssplit,kuromoji,ccg", "-ccg.kBest", "10",
-                "-file", txtfilename], capture_output=True)
+                "-file", inputname], capture_output=True)
     stdout = jigg.stdout.decode()
     stderr = jigg.stderr.decode()
     # print("stdout:", stdout)
     # print("stderr first 50 characters: ", [:50])
-    if not Path(txtfilename+".xml").exists():
+    if not Path(outname).exists():
         raise Exception("output file doesn't exist,"
                         "so jigg seems to have failed.")
     return
 
 
-def _semparse(txtfilename):
-    assert Path(txtfilename).exists()
-    ccg_tree = txtfilename+".xml"
+def _semparse(inputname, outname):
+    assert Path(inputname).exists()
     semantic_template = "ja/semantic_templates_ja_emnlp2016.yaml"
-    out = txtfilename+".sem.xml"
-
     logging.basicConfig(level=logging.WARNING)
 
     semantic_index = SemanticIndex(semantic_template)
 
     parser = etree.XMLParser(remove_blank_text=True)
-    root = etree.parse(ccg_tree, parser)
+    root = etree.parse(inputname, parser)
 
     sentences = root.findall('.//sentence')
     # print('Found {0} sentences'.format(len(sentences)))
@@ -56,7 +53,7 @@ def _semparse(txtfilename):
     logging.info('Finished adding XML semantic nodes to sentences.')
 
     root_xml_str = serialize_tree(root)
-    with codecs.open(out, 'wb') as fout:
+    with codecs.open(outname, 'wb') as fout:
         fout.write(root_xml_str)
     return
 
@@ -76,7 +73,9 @@ def _prove(txtfilename):
 
 
 if __name__ == '__main__':
-    filename = 'tmp.txt'
-    _jiggparse(filename)
-    _semparse(tmpfile)
+    txtname = 'tmp.txt'
+    tmpccg = '/tmp/tmpccg.xml'
+    tmpsem = '/tmp/tmpsem.xml'
+    _jiggparse(txtname, tmpccg)
+    _semparse(tmpccg, tmpsem)
     # _prove('pr'+filename)
