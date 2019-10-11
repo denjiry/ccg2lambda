@@ -61,20 +61,6 @@ def _semparse(txtfilename):
     return
 
 
-def _visualize(txtfilename):
-    assert Path(txtfilename).exists()
-    cp = run(["python", "scripts/visualize.py",
-              txtfilename+".sem.xml"],
-             capture_output=True)
-    stdout = cp.stdout.decode()
-    stderr = cp.stderr.decode()
-    # print("stdout:", stdout)
-    # print("stderr first 50 characters: ", [:50])
-    with Path(txtfilename+".html").open('w') as f:
-        f.write(stdout)
-    return
-
-
 def _prove(txtfilename):
     assert Path(txtfilename).exists(), txtfilename+" does not exists."
     cp = run(["python", "scripts/prove.py",
@@ -92,6 +78,5 @@ def _prove(txtfilename):
 if __name__ == '__main__':
     filename = 'tmp.txt'
     _jiggparse(filename)
-    _semparse(filename)
-    # _visualize(filename)
+    _semparse(tmpfile)
     # _prove('pr'+filename)
