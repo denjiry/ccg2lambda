@@ -32,7 +32,7 @@ def _jiggparse(inputname, outname):
     return
 
 
-def _semparse(inputname, outname):
+def _semparse(inputname):
     assert Path(inputname).exists()
     semantic_template = "ja/semantic_templates_ja_emnlp2016.yaml"
     logging.basicConfig(level=logging.WARNING)
@@ -54,10 +54,6 @@ def _semparse(inputname, outname):
     for sentence, sem_nodes in zip(sentences, sem_nodes_lists):
         sentence.extend(sem_nodes)
     logging.info('Finished adding XML semantic nodes to sentences.')
-
-    root_xml_str = serialize_tree(root)
-    with codecs.open(outname, 'wb') as fout:
-        fout.write(root_xml_str)
     return
 
 
@@ -78,7 +74,6 @@ def _prove(txtfilename):
 if __name__ == '__main__':
     txtname = 'tmp.txt'
     tmpccg = '/tmp/tmpccg.xml'
-    tmpsem = '/tmp/tmpsem.xml'
     _jiggparse(txtname, tmpccg)
-    _semparse(tmpccg, tmpsem)
+    _semparse(tmpccg)
     # _prove('pr'+filename)
