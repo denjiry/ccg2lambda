@@ -56,7 +56,15 @@ def _semparse(inputname):
     semantics = doc.xpath('./sentences/sentence/semantics')
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc,
                                                                  semantics)
-    return dynamic_library_str, formulas
+    formulas_str = [str(f) for f in formulas]
+    return dynamic_library_str, formulas_str
+
+
+def j2l(inputname):
+    tmpccg = '/tmp/tmpccg.xml'
+    _jiggparse(inputname, tmpccg)
+    dynamic_library_str, formulas_str = _semparse(tmpccg)
+    return dynamic_library_str, formulas_str
 
 
 def _prove(txtfilename):
@@ -75,7 +83,5 @@ def _prove(txtfilename):
 
 if __name__ == '__main__':
     txtname = 'tmp.txt'
-    tmpccg = '/tmp/tmpccg.xml'
-    _jiggparse(txtname, tmpccg)
-    dls, fml = _semparse(tmpccg)
+    dls, fml = j2l(txtname)
     # _prove('pr'+filename)
