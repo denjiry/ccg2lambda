@@ -9,7 +9,7 @@ from scripts.semantic_index import SemanticIndex
 from scripts.semparse import semantic_parse_sentence
 from scripts.semantic_types import get_dynamic_library_from_doc
 
-from scripts.theorem import make_coq_script
+from scripts.theorem import make_coq_script, prove_script
 
 
 def _jiggparse(inputname, outname):
@@ -67,21 +67,14 @@ def j2l(inputname):
     return dynamic_library_str, formulas_str
 
 
-def _prove(txtfilename):
-    assert Path(txtfilename).exists(), txtfilename+" does not exists."
-    cp = run(["python", "scripts/prove.py",
-              txtfilename+".sem.xml",
-              "--graph_out", txtfilename+".prove.html"],
-             capture_output=True)
-    stdout = cp.stdout.decode()
-    stderr = cp.stderr.decode()
-    # print("stdout:", stdout)
-    # print("stderr first 50 characters: ", [:50])
-    assert stdout.rstrip("\n") in ["yes", "no", "unknown"]
-    return
+def _prove(premises, conclusion, dynamic_library_str):
+    coq_script = make_coq_script(premises, conclusion,
+                                 dynamic_library_str)
+    inf_result_bool = prove_script(coq_script, timeout=100)
+    return inf_result_bool
 
 
 if __name__ == '__main__':
     txtname = 'tmp.txt'
     dls, fml = j2l(txtname)
-    # _prove('pr'+filename)
+    inf_result_bool = _prove([fml[0]], fml[-1], dls)
