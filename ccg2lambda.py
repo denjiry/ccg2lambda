@@ -13,33 +13,33 @@ from scripts.theorem import make_coq_script, prove_script
 
 
 def _jiggparse(inputname, outname):
-    assert Path(inputname).exists()
-    assert not Path(inputname).is_dir()
-    assert not Path(outname).is_dir()
+    assert inputname.exists()
+    assert not inputname.is_dir()
+    assert not outname.is_dir()
     jigg_dir = "ja/jigg-v-0.4/jar/*"
     jigg = run(["java", "-Xmx4g", "-cp", jigg_dir, "jigg.pipeline.Pipeline",
                 "-annotators", "ssplit,kuromoji,ccg", "-ccg.kBest", "10",
-                "-file", inputname,
-                "-output", outname], capture_output=True)
+                "-file", str(inputname),
+                "-output", str(outname)], capture_output=True)
     stdout = jigg.stdout.decode()
     stderr = jigg.stderr.decode()
     # print("stdout:", stdout)
     # print("stderr first 50 characters: ", [:50])
-    if not Path(outname).exists():
+    if not outname.exists():
         raise Exception("output file doesn't exist,"
                         "so jigg seems to have failed.")
     return
 
 
 def _semparse(inputname):
-    assert Path(inputname).exists()
+    assert inputname.exists()
     semantic_template = "ja/semantic_templates_ja_emnlp2016.yaml"
     logging.basicConfig(level=logging.WARNING)
 
     semantic_index = SemanticIndex(semantic_template)
 
     parser = etree.XMLParser(remove_blank_text=True)
-    root = etree.parse(inputname, parser)
+    root = etree.parse(str(inputname), parser)
 
     sentences = root.findall('.//sentence')
     assert len(sentences) == 1
@@ -60,9 +60,16 @@ def _semparse(inputname):
     return dynamic_library_str, formulas_str
 
 
-def j2l(inputname):
-    tmpccg = '/tmp/tmpccg.xml'
-    _jiggparse(inputname, tmpccg)
+def j2l(japanese_input):
+    # prepare text file which contains japanese_input
+    tmpdir = Path('/tmp/ccg2lambda')
+    tmpdir.mkdir(exist_ok=True)
+    tmptxt = tmpdir / 'tmp.txt'
+    tmpccg = tmpdir / 'tmpccg.xml'
+    tmptxt.write_text(japanese_input)
+
+    # convert tmp.txt to formulas&Parameters
+    _jiggparse(tmptxt, tmpccg)
     dynamic_library_str, formulas_str = _semparse(tmpccg)
     return dynamic_library_str, formulas_str
 
@@ -75,6 +82,6 @@ def _prove(premises, conclusion, dynamic_library_str):
 
 
 if __name__ == '__main__':
-    txtname = 'tmp.txt'
-    dls, fml = j2l(txtname)
+    japanese_input = 'すべての人間は死ぬ。'
+    dls, fml = j2l(japanese_input)
     inf_result_bool = _prove([fml[0]], fml[-1], dls)
