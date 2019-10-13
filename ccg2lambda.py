@@ -83,7 +83,16 @@ def _prove(premises, conclusion, dynamic_library_str):
     return inf_result_bool
 
 
+def prove(premises, conclusion, dynamic_library_strs):
+    dls = '\n'.join(dynamic_library_strs)
+    inf_result_bool = _prove(premises, conclusion, dls)
+    return inf_result_bool
+
+
 if __name__ == '__main__':
-    japanese_input = 'すべての人間は死ぬ。'
-    dls, fml = j2l(japanese_input)
-    inf_result_bool = _prove([fml[0]], fml[-1], dls)
+    p1_dls, p1 = j2l('すべての人間は死ぬ。')
+    p2_dls, p2 = j2l('ソクラテスは人間である。')
+    c_dls, conclusions = j2l('ソクラテスは死ぬ。')
+    inf_result_bool = prove([p1[0], p2[0]], conclusions[0],
+                            [p1_dls, p2_dls, c_dls])
+    assert inf_result_bool is True
