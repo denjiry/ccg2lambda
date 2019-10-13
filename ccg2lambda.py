@@ -34,7 +34,7 @@ def _jiggparse(inputname, outname):
 def _semparse(inputname):
     assert inputname.exists()
     semantic_template = "ja/semantic_templates_ja_emnlp2016.yaml"
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.CRITICAL)
 
     semantic_index = SemanticIndex(semantic_template)
 
