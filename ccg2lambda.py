@@ -53,7 +53,9 @@ def _semparse(inputname):
     logging.info('Finished adding XML semantic nodes to sentences.')
     # extract logic expressions
     doc = root.xpath('./document')[0]
-    semantics = doc.xpath('./sentences/sentence/semantics')
+    _semantics = doc.xpath('./sentences/sentence/semantics')
+    semantics = [sem for sem in _semantics
+                 if sem.get('status', 'failed') == 'success']
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc,
                                                                  semantics)
     formulas_str = [str(f) for f in formulas]
