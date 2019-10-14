@@ -8,6 +8,7 @@ from lxml import etree
 from scripts.semantic_index import SemanticIndex
 from scripts.semparse import semantic_parse_sentence
 from scripts.semantic_types import get_dynamic_library_from_doc
+from scripts.logic_parser import logic_parser, LogicalExpressionException
 
 from scripts.theorem import make_coq_script, prove_script
 
@@ -54,12 +55,27 @@ def _semparse(inputname):
     # extract logic expressions
     doc = root.xpath('./document')[0]
     _semantics = doc.xpath('./sentences/sentence/semantics')
-    semantics = [sem for sem in _semantics
-                 if sem.get('status', 'failed') == 'success']
+    semantics = filter_wrong_semantic(_semantics)
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc,
                                                                  semantics)
     formulas_str = [str(f) for f in formulas]
     return dynamic_library_str, formulas_str
+
+
+def filter_wrong_semantic(semantics):
+    # delete status failed
+    semantics = [sem for sem in semantics
+                 if sem.get('status', 'failed') == 'success']
+    # delete sem which logic_parser cannot parse
+    filtered_semantics = []
+    for sem in semantics:
+        formula = sem.xpath('./span[1]/@sem')[0]
+        try:
+            logic_parser.parse(formula)
+        except LogicalExpressionException:
+            continue
+        filtered_semantics.append(sem)
+    return filtered_semantics
 
 
 def j2l(japanese_input):
