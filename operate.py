@@ -7,10 +7,10 @@ from ccg2lambda import j2l, prove
 db_dir = Path('database')
 
 
-def init(dbpath='default.sqlite'):
+def init_db(dbpath='default.sqlite'):
     database = connect(db_dir / dbpath)
     c = database.cursor()
-    ret = True
+    init_success = True
     try:
         c.execute('''CREATE TABLE japanese
              (id integer, japanese text)''')
@@ -21,7 +21,27 @@ def init(dbpath='default.sqlite'):
              (id integer, promises text,
               conclusion integer, result text)''')
     except Error as e:
-        ret = False
+        init_success = False
         print(e)
     c.close()
-    return ret
+    return init_success
+
+
+def register_japanese(japanese):
+    return
+
+
+def register_formula(formula):
+    return
+
+
+def transform(jid):
+    dls, formula_str = j2l()
+    return
+
+
+def try_prove(premises, conclusion):
+    result_bool = prove()
+    if result_bool:
+        pass
+    return result_bool
