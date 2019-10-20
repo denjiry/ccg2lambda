@@ -59,7 +59,9 @@ def _semparse(inputname):
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc,
                                                                  semantics)
     formulas_str = [str(f) for f in formulas]
-    return dynamic_library_str, formulas_str
+    # filter again
+    f_formulas_str = filter_formulas(formulas_str)
+    return dynamic_library_str, f_formulas_str
 
 
 def filter_wrong_semantic(semantics):
@@ -76,6 +78,17 @@ def filter_wrong_semantic(semantics):
             continue
         filtered_semantics.append(sem)
     return filtered_semantics
+
+
+def filter_formulas(formulas):
+    filtered_formulas = []
+    for f in formulas:
+        try:
+            logic_parser.parse(f)
+        except LogicalExpressionException:
+            continue
+        filtered_formulas.append(f)
+    return filtered_formulas
 
 
 def j2l(japanese_input):
