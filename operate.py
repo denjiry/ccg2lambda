@@ -10,7 +10,7 @@ DBPATH = Path('database') / 'default.sqlite'
 def init_db():
     conn = connect(DBPATH)
     c = conn.cursor()
-    init_success = True
+    success = True
     try:
         c.execute('''CREATE TABLE japanese
              (id integer primary key, japanese text)''')
@@ -21,10 +21,9 @@ def init_db():
              (id integer primary key, promises text,
               conclusion integer, result text)''')
     except Error as e:
-        init_success = False
-        print(e)
+        success = e
     conn.close()
-    return init_success
+    return success
 
 
 def register_japanese(japanese):
@@ -37,8 +36,7 @@ def register_japanese(japanese):
                   (japanese,))
         conn.commit()
     except Error as e:
-        success = False
-        print(e)
+        success = e
     conn.close()
     return success
 
