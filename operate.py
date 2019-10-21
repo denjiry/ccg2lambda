@@ -19,7 +19,7 @@ def init_db():
              (id integer primary key, jid integer, formula text,
               types text, good integer)''')
         c.execute('''CREATE TABLE theorem
-             (id integer primary key, promises text,
+             (id integer primary key, premises text,
               conclusion integer, result text)''')
     except Error as e:
         success = e
