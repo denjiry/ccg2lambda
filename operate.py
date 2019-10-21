@@ -65,6 +65,23 @@ def register_formula(jid, formula, types):
     return success
 
 
+def register_theorem(premises_id, conclusion_id, result_bool):
+    premises_id_text = ', '.join(premises_id)
+    result_text = 'proved' if result_bool else 'not proved'
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    success = True
+    try:
+        c.execute('''INSERT INTO theorem (premises, conclusion, result)
+                  VALUES (?, ?, ?)''',
+                  (premises_id_text, conclusion_id, result_text))
+        conn.commit()
+    except Error as e:
+        success = e
+    conn.close()
+    return success
+
+
 def fetch_japanese(jid):
     conn = connect(DBPATH)
     c = conn.cursor()
