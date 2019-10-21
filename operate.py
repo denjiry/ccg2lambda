@@ -1,6 +1,7 @@
 from sqlite3 import connect, Error
 from pathlib import Path
 
+from scripts.logic_parser import logic_parser, LogicalExpressionException
 from ccg2lambda import j2l, prove
 
 
@@ -41,13 +42,53 @@ def register_japanese(japanese):
     return success
 
 
-def register_formula(formula):
-    return
+def register_formula(jid, formula, types):
+    success = True
+    assert isinstance(formula, str) and isinstance(types, str)
+    # reject formula that cannot be parsed
+    try:
+        logic_parser.parse(formula)
+    except LogicalExpressionException as e:
+        success = e
+        return success
+    # register formula
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('''INSERT INTO logic (jid, formula, types, good)
+                  VALUES (?, ?, ?, ?)''',
+                  (jid, formula, types, 1))
+        conn.commit()
+    except Error as e:
+        success = e
+    conn.close()
+    return success
+
+
+def fetch_japanese(jid):
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT japanese FROM japanese WHERE id = ?',
+                  (jid,))
+        japanese = c.fetchone()[0]
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return japanese
 
 
 def transform(jid):
-    dls, formula_str = j2l()
-    return
+    japanese = fetch_japanese(jid)
+    if isinstance(japanese, Error):
+        return japanese  # as Exception
+    dls, formulas_str = j2l(japanese)
+    rets = [register_formula(jid, f, dls) for f in formulas_str]
+    if all(rets):
+        return True
+    else:
+        return rets
 
 
 def try_prove(premises, conclusion):
