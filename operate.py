@@ -91,6 +91,20 @@ def transform(jid):
         return rets
 
 
+def fetch_formula(fid):
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT formula, types FROM logic WHERE id = ?',
+                  (fid,))
+        formula, types = c.fetchone()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e, e
+    return formula, types
+
+
 def try_prove(premises_id, conclusion_id):
     premises, dls = []
     for pid in premises_id:
