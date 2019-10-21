@@ -106,6 +106,7 @@ def fetch_formula(fid):
 
 
 def try_prove(premises_id, conclusion_id):
+    # fetch formulas
     premises, dls = []
     for pid in premises_id:
         p, pdls = fetch_formula(pid)
@@ -113,6 +114,12 @@ def try_prove(premises_id, conclusion_id):
         dls.append(pdls)
     conclusion, c_dls = fetch_formula(conclusion_id)
     dls.append(c_dls)
+    # check SQL error
+    error_list = [pre for pre in premises if isinstance(pre, Error)]
+    error_list += [conclusion] if isinstance(conclusion, Error) else []
+    if len(error_list) > 0:
+        return error_list
+    # try to prove a theorem : pre1 -> ... -> conclusion
     result_bool = prove(premises, conclusion, dls)
-    register_theorem()
+    register_theorem(premises_id, conclusion_id, result_bool)
     return result_bool
