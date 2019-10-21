@@ -4,31 +4,43 @@ from pathlib import Path
 from ccg2lambda import j2l, prove
 
 
-db_dir = Path('database')
+DBPATH = Path('database') / 'default.sqlite'
 
 
-def init_db(dbpath='default.sqlite'):
-    database = connect(db_dir / dbpath)
-    c = database.cursor()
+def init_db():
+    conn = connect(DBPATH)
+    c = conn.cursor()
     init_success = True
     try:
         c.execute('''CREATE TABLE japanese
-             (id integer, japanese text)''')
+             (id integer primary key, japanese text)''')
         c.execute('''CREATE TABLE logic
-             (id integer, jid integer, formula text,
+             (id integer primary key, jid integer, formula text,
               types text, good integer)''')
         c.execute('''CREATE TABLE theorem
-             (id integer, promises text,
+             (id integer primary key, promises text,
               conclusion integer, result text)''')
     except Error as e:
         init_success = False
         print(e)
-    c.close()
+    conn.close()
     return init_success
 
 
 def register_japanese(japanese):
-    return
+    assert isinstance(japanese, str)
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    success = True
+    try:
+        c.execute('INSERT INTO japanese (japanese) VALUES (?)',
+                  (japanese,))
+        conn.commit()
+    except Error as e:
+        success = False
+        print(e)
+    conn.close()
+    return success
 
 
 def register_formula(formula):
