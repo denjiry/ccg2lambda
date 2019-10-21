@@ -91,8 +91,14 @@ def transform(jid):
         return rets
 
 
-def try_prove(premises, conclusion):
-    result_bool = prove()
-    if result_bool:
-        pass
+def try_prove(premises_id, conclusion_id):
+    premises, dls = []
+    for pid in premises_id:
+        p, pdls = fetch_formula(pid)
+        premises.append(p)
+        dls.append(pdls)
+    conclusion, c_dls = fetch_formula(conclusion_id)
+    dls.append(c_dls)
+    result_bool = prove(premises, conclusion, dls)
+    register_theorem()
     return result_bool
