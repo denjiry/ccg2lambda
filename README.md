@@ -1,3 +1,15 @@
+# Web App of ccg2lambda
+
+This is a GUI Web application of ccg2lambda.
+
+- scripts/ : original ccg2lambda's main processing scripts
+- ccg2lambda.py : few core functions. (wrapper of scripts/)
+- operate.py : handle japanese & logical formula using functions of ccg2lambda.py & SQLite.
+- server.py : flask server calling functions of operate.py
+- web/ : web frontend srcs (Elm only now)
+
+# --- Original README.md is below ---
+
 # ccg2lambda: composing semantic representations guided by CCG derivations
 
 This is a tool to derive formal semantic representations of
