@@ -140,3 +140,57 @@ def try_prove(premises_id, conclusion_id):
     result_bool = prove(premises, conclusion, dls)
     register_theorem(premises_id, conclusion_id, result_bool)
     return result_bool
+
+
+def info_japanese():
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT id, japanese FROM japanese')
+        japanese = c.fetchall()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    # jid, jj = map(list, zip(*japanese))
+    return japanese
+
+
+def info_logic():
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT id, jid, formula, types, good FROM logic')
+        logic_table = c.fetchall()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return logic_table
+
+
+def info_formulas_from_jid(jid):
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT id, formula, types, good FROM logic WHERE jid = ?',
+                  (jid,))
+        formulas = c.fetchall()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return formulas
+
+
+def info_theorem():
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT id, premises, conclusion, result FROM theorem')
+        theorems = c.fetchall()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return theorems
