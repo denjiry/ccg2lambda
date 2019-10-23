@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 
 type Model
@@ -32,7 +33,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         FetchTable ->
-            ( Success, Cmd.none )
+            ( Processing, Cmd.none )
 
 
 
@@ -53,7 +54,9 @@ view model =
     case model of
         Success ->
             div []
-                [ text "success!" ]
+                [ text "success!"
+                , button [ onClick FetchTable ] [ text "load table" ]
+                ]
 
         Processing ->
             div []
