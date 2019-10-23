@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, send_from_directory, request, jsonify
 
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def post_json():
     return jsonify(json)  # JSONをレスポンス
 
 
-@app.route('/', methods=['GET'])
+@app.route('/hoge', methods=['GET'])
 def get_json_from_dictionary():
     dic = {
         'foo': 'bar',
@@ -100,5 +100,10 @@ def update_task(taskid):
     return jsonify(json)
 
 
+@app.route('/')
+def root():
+    return send_from_directory('.', 'main.html')
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=9999, host='127.0.0.1', debug=True)

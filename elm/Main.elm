@@ -53,7 +53,7 @@ view model =
     case model of
         Success ->
             div []
-                [ text "success" ]
+                [ text "success!" ]
 
         Processing ->
             div []

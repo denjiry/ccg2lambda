@@ -1,2 +1,2 @@
-elm make elm/Main.elm --output web/index.html
+elm make elm/Main.elm --output main.html
 python server.py
