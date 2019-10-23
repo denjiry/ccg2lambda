@@ -21,7 +21,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Success, Cmd.None )
+    ( Success, Cmd.none )
 
 
 
