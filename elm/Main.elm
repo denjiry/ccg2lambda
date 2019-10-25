@@ -49,6 +49,19 @@ subscriptions model =
 -- view
 
 
+maptable =
+    table []
+        [ thead []
+            [ th [] [ text "Product" ]
+            , th [] [ text "Amount" ]
+            ]
+        , tr []
+            [ td [] [ text "Total" ]
+            , td [] [ text (String.fromInt 42) ]
+            ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     case model of
@@ -57,6 +70,7 @@ view model =
                 [ text "success!"
                 , div []
                     [ button [ onClick FetchTable ] [ text "load table" ] ]
+                , maptable
                 ]
 
         Processing ->
