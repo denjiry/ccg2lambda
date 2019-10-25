@@ -68,6 +68,23 @@ view model =
 
 
 
+-- http
+-- curl -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' -d '{"task": "映画館に行く"}' localhost:5000/tasks
+
+
+getJapaneseTable =
+    [ "id", "ja" ]
+
+
+getLogicTable =
+    [ "id", "logic" ]
+
+
+getTheoremTable =
+    [ "id", "th" ]
+
+
+
 -- Main
 
 
