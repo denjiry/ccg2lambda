@@ -55,7 +55,8 @@ view model =
         Success ->
             div []
                 [ text "success!"
-                , button [ onClick FetchTable ] [ text "load table" ]
+                , div []
+                    [ button [ onClick FetchTable ] [ text "load table" ] ]
                 ]
 
         Processing ->
