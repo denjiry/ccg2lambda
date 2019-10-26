@@ -6,10 +6,34 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
-type Model
-    = Failure
-    | Processing
-    | Success
+type alias JapaneseTable =
+    { id : List Int
+    , japanese : List String
+    }
+
+
+type alias LogicTable =
+    { id : List Int
+    , jid : List Int
+    , formula : List String
+    , types : List String
+    , good : List Int
+    }
+
+
+type alias TheoremTable =
+    { id : List Int
+    , premises : List (List Int)
+    , conclusion : List Int
+    , result : List String
+    }
+
+
+type alias Model =
+    { jatable : JapaneseTable
+    , lotable : LogicTable
+    , thtable : TheoremTable
+    }
 
 
 type Msg
