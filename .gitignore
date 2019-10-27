@@ -1,2 +1,6 @@
 __pycache__/
 *~
+*.aux
+*.glob
+*.vo
+elm-stuff/
