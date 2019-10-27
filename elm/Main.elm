@@ -24,24 +24,36 @@ type alias Logic =
 
 type alias Theorem =
     { id : Int
-    , premises : List Int
+    , premises : String
     , conclusion : Int
     , result : String
     }
 
 
+type alias AllTable =
+    { jatable : List Japanese
+    , lotable : List Logic
+    , thtable : List Theorem
+    }
+
+
 type alias Model =
     { jatable : List Japanese
-    , jatableState : Table.State
+    , jaState : Table.State
     , lotable : List Logic
-    , lotableState : Table.State
+    , loState : Table.State
     , thtable : List Theorem
-    , thtableState : Table.State
+    , thState : Table.State
+    , message : String
     }
 
 
 type Msg
-    = FetchTable
+    = RefreshTables
+    | GotTables (Result Http.Error AllTable)
+    | SetJaTableState Table.State
+    | SetLoTableState Table.State
+    | SetThTableState Table.State
 
 
 
@@ -50,7 +62,9 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Success, Cmd.none )
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") ""
+    , Cmd RefreshTables
+    )
 
 
 
@@ -60,8 +74,40 @@ init _ =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchTable ->
-            ( Processing, Cmd.none )
+        RefreshTables ->
+            ( model, getAllTable )
+
+        GotTables result ->
+            case result of
+                Ok alltable ->
+                    ( { model
+                        | jatable = alltable.jatable
+                        , lotable = alltable.lotable
+                        , thtable = alltable.thtable
+                        , message = "success to fetch alltable"
+                      }
+                    , Cmd SetjaTableState
+                    )
+
+                Err _ ->
+                    ( { model | message = "failed to fetch alltable" }
+                    , Cmd.none
+                    )
+
+        SetJaTableState newState ->
+            ( { model | jaState = newState }
+            , Cmd SetLoTableState
+            )
+
+        SetLoTableState newState ->
+            ( { model | loState = newState }
+            , Cmd SetThTableState
+            )
+
+        SetThTableState newState ->
+            ( { model | thState = newState }
+            , Cmd.None
+            )
 
 
 
@@ -72,42 +118,64 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 
-
-
 -- view
-
-
-maptable =
-    table []
-        [ thead []
-            [ th [] [ text "Product" ]
-            , th [] [ text "Amount" ]
-            ]
-        , tr []
-            [ td [] [ text "Total" ]
-            , td [] [ text (String.fromInt 42) ]
-            ]
-        ]
 
 
 view : Model -> Html Msg
 view model =
-    case model of
-        Success ->
-            div []
-                [ text "success!"
-                , div []
-                    [ button [ onClick FetchTable ] [ text "load table" ] ]
-                , maptable
-                ]
+    div []
+        [ text model.message
+        , div []
+            [ button [ onClick RefreshTables ] [ text "load table" ] ]
+        , Table.view jaconfig model.jaState
+        , model.jatable
+        , Table.view loconfig model.loState
+        , model.loatable
+        , Table.view thconfig model.thState
+        , model.thtable
+        ]
 
-        Processing ->
-            div []
-                [ text "processing" ]
 
-        Failure ->
-            div []
-                [ text "failure" ]
+jaconfig : Table.Config Japanese Msg
+jaconfig =
+    Table.config
+        { toId = .id
+        , toMsg = SetJaTableState
+        , columns =
+            [ Table.intColumn "Id" .id
+            , Table.stringColumn "Japanese" .japanese
+            ]
+        }
+
+
+loconfig : Table.Config Logic Msg
+loconfig =
+    Table.config
+        { toId = .id
+        , toMsg = SetLoTableState
+        , columns =
+            [ Table
+            , intColumn "Id" .id
+            , Table.intColumn "Jid" .jid
+            , Table.stringColumn "Formula" .formula
+            , Table.stringColumn "Types" .types
+            , Table.intColumn "Good" .good
+            ]
+        }
+
+
+thconfig : Table.Config Theorem Msg
+thconfig =
+    Table.config
+        { toId = .id
+        , toMsg = SetThTableState
+        , columns =
+            [ Table.intColumn "Id" .id
+            , Table.stringColumn "Premises" .premises
+            , Table.intColumn "Conclusion" .conclusion
+            , Table.stringColumn "Result" .result
+            ]
+        }
 
 
 
