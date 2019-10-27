@@ -111,13 +111,6 @@ update msg model =
 
 
 
--- subscriptions
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
-
 -- view
 
 
@@ -204,6 +197,6 @@ main =
     Browser.element
         { init = init
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = \_ -> Sub.none
         , view = view
         }
