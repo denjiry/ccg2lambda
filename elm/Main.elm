@@ -4,35 +4,39 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Table
 
 
-type alias JapaneseTable =
-    { id : List Int
-    , japanese : List String
+type alias Japanese =
+    { id : Int
+    , japanese : String
     }
 
 
-type alias LogicTable =
-    { id : List Int
-    , jid : List Int
-    , formula : List String
-    , types : List String
-    , good : List Int
+type alias Logic =
+    { id : Int
+    , jid : Int
+    , formula : String
+    , types : String
+    , good : Int
     }
 
 
-type alias TheoremTable =
-    { id : List Int
-    , premises : List (List Int)
-    , conclusion : List Int
-    , result : List String
+type alias Theorem =
+    { id : Int
+    , premises : List Int
+    , conclusion : Int
+    , result : String
     }
 
 
 type alias Model =
-    { jatable : JapaneseTable
-    , lotable : LogicTable
-    , thtable : TheoremTable
+    { jatable : List Japanese
+    , jatableState : Table.State
+    , lotable : List Logic
+    , lotableState : Table.State
+    , thtable : List Theorem
+    , thtableState : Table.State
     }
 
 
