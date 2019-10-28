@@ -8,6 +8,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Table
 import Url
+import Url.Builder as UB
 
 
 type alias Japanese =
@@ -214,15 +215,15 @@ thtoid th =
 -- curl -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' -d '{"task": "映画館に行く"}' localhost:5000/tasks
 
 
-hostUrl : String
-hostUrl =
-    "127.0.0.1:9999"
+apiUrl : String
+apiUrl =
+    "http://127.0.0.1:9999/api"
 
 
 getAllTable : Cmd Msg
 getAllTable =
     Http.get
-        { url = hostUrl
+        { url = UB.relative [ apiUrl, "alltable" ] []
         , expect = Http.expectJson GotTables tableDecoder
         }
 
