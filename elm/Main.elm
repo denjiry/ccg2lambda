@@ -77,7 +77,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RefreshTables ->
-            ( model, getAllTable )
+            ( { model | message = "Refreshing..." }, getAllTable )
 
         GotTables result ->
             case result of
@@ -91,8 +91,26 @@ update msg model =
                     , Cmd.none
                     )
 
-                Err _ ->
-                    ( { model | message = "failed to fetch alltable" }
+                Err httperror ->
+                    let
+                        retmessage =
+                            case httperror of
+                                Http.BadUrl str ->
+                                    "BadUrl:" ++ str
+
+                                Http.Timeout ->
+                                    "Timeout"
+
+                                Http.NetworkError ->
+                                    "NetworkError"
+
+                                Http.BadStatus code ->
+                                    "BadStatus:" ++ String.fromInt code
+
+                                Http.BadBody str ->
+                                    "BadBody:" ++ str
+                    in
+                    ( { model | message = "Http.Error:" ++ retmessage }
                     , Cmd.none
                     )
 
