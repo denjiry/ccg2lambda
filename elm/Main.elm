@@ -7,6 +7,7 @@ import Html.Events exposing (..)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Table
+import Url
 
 
 type alias Japanese =
@@ -213,10 +214,15 @@ thtoid th =
 -- curl -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' -d '{"task": "映画館に行く"}' localhost:5000/tasks
 
 
+hostUrl : String
+hostUrl =
+    "127.0.0.1:9999"
+
+
 getAllTable : Cmd Msg
 getAllTable =
     Http.get
-        { url = ""
+        { url = hostUrl
         , expect = Http.expectJson GotTables tableDecoder
         }
 
