@@ -1,5 +1,7 @@
+import json as js
 from flask import Flask, send_from_directory, request, jsonify
 
+import operate as op
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False  # JSONでの日本語文字化け対策
@@ -98,6 +100,17 @@ def update_task(taskid):
         'message': msg
     }
     return jsonify(json)
+
+
+@app.route('/api/alltable', methods=['GET'])
+def alltable():
+    japanese = op.info_japanese()
+    logic_table = op.info_logic()
+    theorems = op.info_theorem()
+    alltable = {"jatable": japanese,
+                "lotable": logic_table,
+                "thtable": theorems}
+    return js.dumps(alltable)
 
 
 @app.route('/')
