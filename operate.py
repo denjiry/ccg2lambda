@@ -66,7 +66,7 @@ def register_formula(jid, formula, types):
 
 
 def register_theorem(premises_id, conclusion_id, result_bool):
-    premises_id_text = ' & '.join(premises_id)
+    premises_id_text = ' & '.join(map(str, premises_id))
     result_text = 'proved' if result_bool else 'not proved'
     conn = connect(DBPATH)
     c = conn.cursor()
