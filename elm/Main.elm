@@ -122,12 +122,15 @@ view model =
         [ text model.message
         , div []
             [ button [ onClick RefreshTables ] [ text "load table" ] ]
-        , Table.view jaconfig model.jaState
-        , model.jatable
-        , Table.view loconfig model.loState
-        , model.loatable
-        , Table.view thconfig model.thState
-        , model.thtable
+        , Table.view jaconfig
+            model.jaState
+            model.jatable
+        , Table.view loconfig
+            model.loState
+            model.lotable
+        , Table.view thconfig
+            model.thState
+            model.thtable
         ]
 
 
@@ -149,8 +152,7 @@ loconfig =
         { toId = .id
         , toMsg = SetLoTableState
         , columns =
-            [ Table
-            , intColumn "Id" .id
+            [ Table.intColumn "Id" .id
             , Table.intColumn "Jid" .jid
             , Table.stringColumn "Formula" .formula
             , Table.stringColumn "Types" .types
