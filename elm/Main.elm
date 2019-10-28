@@ -213,34 +213,37 @@ tableDecoder =
 
 jatableDecoder : Decoder (List Japanese)
 jatableDecoder =
-    list
-        Decode.map2
-        Japanese
-        (index 0 int)
-        (index 1 string)
+    Decode.list
+        (Decode.map2
+            Japanese
+            (index 0 int)
+            (index 1 string)
+        )
 
 
 lotableDecoder : Decoder (List Logic)
 lotableDecoder =
-    list
-        Decode.map5
-        Logic
-        (index 0 int)
-        (index 1 int)
-        (index 2 string)
-        (index 3 string)
-        (index 4 int)
+    Decode.list
+        (Decode.map5
+            Logic
+            (index 0 int)
+            (index 1 int)
+            (index 2 string)
+            (index 3 string)
+            (index 4 int)
+        )
 
 
 thtableDecoder : Decoder (List Theorem)
 thtableDecoder =
-    list
-        Decode.map4
-        Theorem
-        (index 0 int)
-        (index 1 string)
-        (index 2 int)
-        (index 3 string)
+    Decode.list
+        (Decode.map4
+            Theorem
+            (index 0 int)
+            (index 1 string)
+            (index 2 int)
+            (index 3 string)
+        )
 
 
 
