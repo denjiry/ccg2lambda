@@ -5,7 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
-import Json.Decode as Decode exposing (Decoder, field, int, list, string)
+import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Table
 
 
@@ -188,7 +188,42 @@ getAllTable =
 
 tableDecoder : Decoder AllTable
 tableDecoder =
-    Decode.succeed AllTable
+    Decode.map3 AllTable
+        (field "jatable" jatableDecoder)
+        (field "lotable" lotableDecoder)
+        (field "thtable" thtableDecoder)
+
+
+jatableDecoder : Decoder (List Japanese)
+jatableDecoder =
+    list
+        Decode.map2
+        Japanese
+        (index 0 int)
+        (index 1 string)
+
+
+lotableDecoder : Decoder (List Logic)
+lotableDecoder =
+    list
+        Decode.map5
+        Logic
+        (index 0 int)
+        (index 1 int)
+        (index 2 string)
+        (index 3 string)
+        (index 4 int)
+
+
+thtableDecoder : Decoder (List Theorem)
+thtableDecoder =
+    list
+        Decode.map4
+        Theorem
+        (index 0 int)
+        (index 1 string)
+        (index 2 int)
+        (index 3 string)
 
 
 
