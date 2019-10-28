@@ -4,6 +4,8 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Http
+import Json.Decode as Decode exposing (Decoder, field, int, list, string)
 import Table
 
 
@@ -176,16 +178,17 @@ thconfig =
 -- curl -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' -d '{"task": "映画館に行く"}' localhost:5000/tasks
 
 
-getJapaneseTable =
-    [ "id", "ja" ]
+getAllTable : Cmd Msg
+getAllTable =
+    Http.get
+        { url = ""
+        , expect = Http.expectJson GotTables tableDecoder
+        }
 
 
-getLogicTable =
-    [ "id", "logic" ]
-
-
-getTheoremTable =
-    [ "id", "th" ]
+tableDecoder : Decoder AllTable
+tableDecoder =
+    Decode.succeed AllTable
 
 
 
