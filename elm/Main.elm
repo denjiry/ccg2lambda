@@ -65,7 +65,7 @@ type Msg
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") ""
-    , Cmd RefreshTables
+    , getAllTable
     )
 
 
@@ -88,7 +88,7 @@ update msg model =
                         , thtable = alltable.thtable
                         , message = "success to fetch alltable"
                       }
-                    , Cmd SetjaTableState
+                    , Cmd.none
                     )
 
                 Err _ ->
@@ -98,17 +98,17 @@ update msg model =
 
         SetJaTableState newState ->
             ( { model | jaState = newState }
-            , Cmd SetLoTableState
+            , Cmd.none
             )
 
         SetLoTableState newState ->
             ( { model | loState = newState }
-            , Cmd SetThTableState
+            , Cmd.none
             )
 
         SetThTableState newState ->
             ( { model | thState = newState }
-            , Cmd.None
+            , Cmd.none
             )
 
 
