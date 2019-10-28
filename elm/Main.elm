@@ -137,7 +137,7 @@ view model =
 jaconfig : Table.Config Japanese Msg
 jaconfig =
     Table.config
-        { toId = .id
+        { toId = jatoid
         , toMsg = SetJaTableState
         , columns =
             [ Table.intColumn "Id" .id
@@ -146,10 +146,15 @@ jaconfig =
         }
 
 
+jatoid : Japanese -> String
+jatoid ja =
+    String.fromInt ja.id
+
+
 loconfig : Table.Config Logic Msg
 loconfig =
     Table.config
-        { toId = .id
+        { toId = lotoid
         , toMsg = SetLoTableState
         , columns =
             [ Table.intColumn "Id" .id
@@ -161,10 +166,15 @@ loconfig =
         }
 
 
+lotoid : Logic -> String
+lotoid lo =
+    String.fromInt lo.id
+
+
 thconfig : Table.Config Theorem Msg
 thconfig =
     Table.config
-        { toId = .id
+        { toId = thtoid
         , toMsg = SetThTableState
         , columns =
             [ Table.intColumn "Id" .id
@@ -173,6 +183,11 @@ thconfig =
             , Table.stringColumn "Result" .result
             ]
         }
+
+
+thtoid : Theorem -> String
+thtoid th =
+    String.fromInt th.id
 
 
 
