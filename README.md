@@ -2,6 +2,18 @@
 
 This is a GUI Web application of ccg2lambda.
 
+## Requirements
+- original ccg2lambda's requirements
+- Flask
+- Elm
+
+## Usage
+
+1. `$ ./start.sh`
+
+2. Open http://localhost:9999 on your browser.
+
+## contents
 - scripts/ : original ccg2lambda's main processing scripts
 - ccg2lambda.py : few core functions. (wrapper of scripts/)
 - operate.py : handle japanese & logical formula using functions of ccg2lambda.py & SQLite.

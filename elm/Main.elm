@@ -217,7 +217,7 @@ thtoid th =
 
 apiUrl : String
 apiUrl =
-    "http://127.0.0.1:9999/api"
+    "http://localhost:9999/api"
 
 
 getAllTable : Cmd Msg

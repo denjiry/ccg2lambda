@@ -115,8 +115,15 @@ def alltable():
 
 @app.route('/')
 def root():
+    init_response = op.init_db()
+    if init_response is True:
+        print("DB message: initialized now.")
+    elif isinstance(init_response, op.Error):
+        print("DB message:", init_response)
+    else:
+        assert False
     return send_from_directory('.', 'main.html')
 
 
 if __name__ == '__main__':
-    app.run(port=9999, host='127.0.0.1', debug=True)
+    app.run(port=9999, host='localhost', debug=True)
