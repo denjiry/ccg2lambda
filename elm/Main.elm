@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
+import Json.Encode as Encode
 import Table
 import Url
 import Url.Builder as UB
@@ -58,6 +59,7 @@ type Msg
     | SetJaTableState Table.State
     | SetLoTableState Table.State
     | SetThTableState Table.State
+    | RegJapanese (Result Http.Error String)
 
 
 
@@ -218,6 +220,20 @@ thtoid th =
 apiUrl : String
 apiUrl =
     "http://localhost:9999/api"
+
+
+registerJapanese : Cmd Msg
+registerJapanese japanese =
+    Http.post
+        { url = UB.relative [ apiUrl, "reg_ja" ] []
+        , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string japanese ) ])
+        , expect = Http.expectJson RegJapanese messageDecoder
+        }
+
+
+messageDecoder : Decoder String
+messageDecoder =
+    field "message" string
 
 
 getAllTable : Cmd Msg
