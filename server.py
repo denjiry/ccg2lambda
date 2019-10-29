@@ -72,19 +72,19 @@ def delete_task(taskid):
     return jsonify(json)
 
 
-@app.route('/tasks', methods=['POST'])
-def create_task():
-    taskid = str(int(max(tasks.keys())) + 1)
+@app.route('/api/reg_ja', methods=['POST'])
+def reg_ja():
     posted = request.get_json()
-    if 'task' in posted:
-        tasks[taskid] = posted['task']
-        msg = 'New task created'
+    if 'japanese' in posted:
+        ja = posted['japanese']
+        op.register_japanese()
+        msg = 'Register: ' + ja
     else:
-        msg = 'No task created'
+        msg = 'Fail to register'
     json = {
         'message': msg
     }
-    return jsonify(json)
+    return js.dumps(json)
 
 
 @app.route('/tasks/<int:taskid>', methods=['PUT'])
