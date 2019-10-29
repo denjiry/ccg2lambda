@@ -27,18 +27,23 @@ def init_db():
     return success
 
 
-def register_japanese(japanese):
-    assert isinstance(japanese, str)
+def _ex(query_str, arg_tuple):
     conn = connect(DBPATH)
     c = conn.cursor()
     success = True
     try:
-        c.execute('INSERT INTO japanese (japanese) VALUES (?)',
-                  (japanese,))
+        c.execute(query_str, arg_tuple)
         conn.commit()
     except Error as e:
         success = e
     conn.close()
+    return success
+
+
+def register_japanese(japanese):
+    assert isinstance(japanese, str)
+    success = _ex('INSERT INTO japanese (japanese) VALUES (?)',
+                  (japanese,))
     return success
 
 
@@ -52,33 +57,18 @@ def register_formula(jid, formula, types):
         success = e
         return success
     # register formula
-    conn = connect(DBPATH)
-    c = conn.cursor()
-    try:
-        c.execute('''INSERT INTO logic (jid, formula, types, good)
+    success = _ex('''INSERT INTO logic (jid, formula, types, good)
                   VALUES (?, ?, ?, ?)''',
                   (jid, formula, types, 1))
-        conn.commit()
-    except Error as e:
-        success = e
-    conn.close()
     return success
 
 
 def register_theorem(premises_id, conclusion_id, result_bool):
     premises_id_text = ' & '.join(map(str, premises_id))
     result_text = 'proved' if result_bool else 'not proved'
-    conn = connect(DBPATH)
-    c = conn.cursor()
-    success = True
-    try:
-        c.execute('''INSERT INTO theorem (premises, conclusion, result)
+    success = _ex('''INSERT INTO theorem (premises, conclusion, result)
                   VALUES (?, ?, ?)''',
                   (premises_id_text, conclusion_id, result_text))
-        conn.commit()
-    except Error as e:
-        success = e
-    conn.close()
     return success
 
 
@@ -142,30 +132,26 @@ def try_prove(premises_id, conclusion_id):
     return result_bool
 
 
-def info_japanese():
+def _fall(sqquery):
     conn = connect(DBPATH)
     c = conn.cursor()
     try:
-        c.execute('SELECT id, japanese FROM japanese')
-        japanese = c.fetchall()
+        c.execute(sqquery)
+        ret = c.fetchall()
         conn.close()
     except Error as e:
         conn.close()
         return e
-    # jid, jj = map(list, zip(*japanese))
+    return ret
+
+
+def info_japanese():
+    japanese = _fall('SELECT id, japanese FROM japanese')
     return japanese
 
 
 def info_logic():
-    conn = connect(DBPATH)
-    c = conn.cursor()
-    try:
-        c.execute('SELECT id, jid, formula, types, good FROM logic')
-        logic_table = c.fetchall()
-        conn.close()
-    except Error as e:
-        conn.close()
-        return e
+    logic_table = _fall('SELECT id, jid, formula, types, good FROM logic')
     return logic_table
 
 
@@ -184,13 +170,5 @@ def info_formulas_from_jid(jid):
 
 
 def info_theorem():
-    conn = connect(DBPATH)
-    c = conn.cursor()
-    try:
-        c.execute('SELECT id, premises, conclusion, result FROM theorem')
-        theorems = c.fetchall()
-        conn.close()
-    except Error as e:
-        conn.close()
-        return e
+    theorems = _fall('SELECT id, premises, conclusion, result FROM theorem')
     return theorems
