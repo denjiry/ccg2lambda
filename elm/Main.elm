@@ -145,12 +145,12 @@ view model =
         , Table.view jaconfig
             model.jaState
             model.jatable
-        , Table.view loconfig
-            model.loState
-            model.lotable
         , Table.view thconfig
             model.thState
             model.thtable
+        , Table.view loconfig
+            model.loState
+            model.lotable
         ]
 
 
