@@ -77,10 +77,13 @@ def reg_ja():
     posted = request.get_json()
     if 'japanese' in posted:
         ja = posted['japanese']
-        op.register_japanese(ja)
-        msg = 'Register: ' + ja
+        success = op.register_japanese(ja)
+        if success is True:
+            msg = 'Register: ' + ja
+        else:
+            msg = 'Fail to register:' + success
     else:
-        msg = 'Fail to register'
+        msg = 'Fail to register: Wrong json'
     json = {
         'message': msg
     }
@@ -94,29 +97,39 @@ def reg_lo():
         jid = posted['jid']
         formula = posted['formula']
         types = posted['types']
-        op.register_japanese(jid, formula, types)
-        msg = 'Register: ' + jid + ': '+ formula + ': types[' + types + ']'
+        success = op.register_japanese(jid, formula, types)
+        if success is True:
+            msg = 'Register: jid=' + jid + ': '+ formula + ': types[' + types + ']'
+        else:
+            msg = 'Fail to register:' + success
     else:
-        msg = 'Fail to register'
+        msg = 'Fail to register: Wrong json'
     json = {
         'message': msg
     }
     return js.dumps(json)
 
 
-@app.route('/tasks/<int:taskid>', methods=['PUT'])
-def update_task(taskid):
-    taskid = str(taskid)
+@app.route('/api/reg_th', methods=['POST'])
+def reg_th():
     posted = request.get_json()
-    if 'task' in posted and taskid in tasks:
-        tasks[taskid] = posted['task']
-        msg = 'Task {} updated'.format(taskid)
+    arguments = ['premises_id', 'conclusion_id', 'result_bool']
+    if all([el in posted for el in arguments]):
+        pre_id_text = posted['premises_id']
+        c_id = posted['conclusion_id']
+        result_bool = posted['result_bool']
+        pre_id = list(map(int, pre_id_text.split('&')))
+        success = op.register_theorem(pre_id, c_id, result_bool)
+        if success is True:
+            msg = 'Register: ' + pre_id_text + '->' + c_id + ':' + result_bool
+        else:
+            msg = 'Fail to register:' + success
     else:
-        msg = 'No task updated'
+        msg = 'Fail to register: Wrong json'
     json = {
         'message': msg
     }
-    return jsonify(json)
+    return js.dumps(json)
 
 
 @app.route('/api/alltable', methods=['GET'])
