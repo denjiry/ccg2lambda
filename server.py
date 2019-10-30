@@ -87,6 +87,23 @@ def reg_ja():
     return js.dumps(json)
 
 
+@app.route('/api/reg_lo', methods=['POST'])
+def reg_lo():
+    posted = request.get_json()
+    if ('jid' in posted)and('formula' in posted)and('types' in posted):
+        jid = posted['jid']
+        formula = posted['formula']
+        types = posted['types']
+        op.register_japanese(jid, formula, types)
+        msg = 'Register: ' + jid + ': '+ formula + ': types[' + types + ']'
+    else:
+        msg = 'Fail to register'
+    json = {
+        'message': msg
+    }
+    return js.dumps(json)
+
+
 @app.route('/tasks/<int:taskid>', methods=['PUT'])
 def update_task(taskid):
     taskid = str(taskid)
