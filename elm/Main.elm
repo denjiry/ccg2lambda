@@ -222,7 +222,7 @@ apiUrl =
     "http://localhost:9999/api"
 
 
-registerJapanese : Cmd Msg
+registerJapanese : String -> Cmd Msg
 registerJapanese japanese =
     Http.post
         { url = UB.relative [ apiUrl, "reg_ja" ] []
