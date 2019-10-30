@@ -132,6 +132,25 @@ def reg_th():
     return js.dumps(json)
 
 
+@app.route('/api/update_good', methods=['POST'])
+def update_good():
+    posted = request.get_json()
+    if 'id' in posted and 'new_good' in posted:
+        id_ = posted['id']
+        new_good = posted['new_good']
+        success = op.update_formula_good(id_, new_good)
+        if success is True:
+            msg = 'Update formula: ' + id_ + ' good: ' + new_good 
+        else:
+            msg = 'Fail to register:' + success
+    else:
+        msg = 'Fail to register: Wrong json'
+    json = {
+        'message': msg
+    }
+    return js.dumps(json)
+
+
 @app.route('/api/alltable', methods=['GET'])
 def alltable():
     japanese = op.info_japanese()

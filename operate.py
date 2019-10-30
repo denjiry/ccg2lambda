@@ -83,7 +83,7 @@ def update_formula_good(id_, new_good):
     except Error as e:
         conn.close()
         return e
-    return
+    return True
 
 
 def fetch_japanese(jid):
