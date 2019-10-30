@@ -50,6 +50,7 @@ type alias Model =
     , thtable : List Theorem
     , thState : Table.State
     , message : String
+    , formJa : String
     }
 
 
@@ -59,7 +60,9 @@ type Msg
     | SetJaTableState Table.State
     | SetLoTableState Table.State
     | SetThTableState Table.State
-    | RegJapanese (Result Http.Error String)
+    | RegJapanese String
+    | Registered (Result Http.Error String)
+    | FormJapanese String
 
 
 
@@ -68,7 +71,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") ""
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" ""
     , getAllTable
     )
 
@@ -115,6 +118,29 @@ update msg model =
             , Cmd.none
             )
 
+        RegJapanese japanese ->
+            ( model
+            , registerJapanese japanese
+            )
+
+        Registered result ->
+            case result of
+                Ok message ->
+                    ( { model | message = message }
+                    , Cmd.none
+                    )
+
+                Err err ->
+                    ( { model | message = "Http.Error:" ++ handleHttpError err }
+                    , Cmd.none
+                    )
+
+        FormJapanese japanese ->
+            ( { model | formJa = japanese }
+            , Cmd.none
+            )
+
+
 handleHttpError : Http.Error -> String
 handleHttpError httperror =
     case httperror of
@@ -144,6 +170,8 @@ view model =
         [ text model.message
         , div []
             [ button [ onClick RefreshTables ] [ text "load table" ] ]
+        , div []
+            [ viewForm "" model.formJa FormJapanese RegJapanese model.formJa "Reg Japanese" ]
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -153,6 +181,14 @@ view model =
         , Table.view loconfig
             model.loState
             model.lotable
+        ]
+
+
+viewForm : String -> String -> (String -> Msg) -> (String -> Msg) -> String -> String -> Html Msg
+viewForm p v toMsg regMsg form btnText =
+    div []
+        [ input [ type_ "text", placeholder p, value v, onInput toMsg ] []
+        , button [ onClick (regMsg form) ] [ text btnText ]
         ]
 
 
@@ -227,7 +263,7 @@ registerJapanese japanese =
     Http.post
         { url = UB.relative [ apiUrl, "reg_ja" ] []
         , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string japanese ) ])
-        , expect = Http.expectJson RegJapanese messageDecoder
+        , expect = Http.expectJson Registered messageDecoder
         }
 
 
