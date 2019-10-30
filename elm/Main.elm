@@ -169,9 +169,10 @@ view model =
     div []
         [ text model.message
         , div []
-            [ button [ onClick RefreshTables ] [ text "load table" ] ]
+            [ button [ onClick RefreshTables ] [ text "Refresh tables" ] ]
         , div []
-            [ viewForm "" model.formJa FormJapanese RegJapanese model.formJa "Reg Japanese" ]
+            [ text "Reg JapaneseしたらRefresh tablesしてください"
+            ,viewForm "" model.formJa FormJapanese RegJapanese model.formJa "Reg Japanese" ]
         , Table.view jaconfig
             model.jaState
             model.jatable
