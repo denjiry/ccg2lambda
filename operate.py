@@ -186,3 +186,17 @@ def info_formulas_from_jid(jid):
 def info_theorem():
     theorems = _fall('SELECT id, premises, conclusion, result FROM theorem')
     return theorems
+
+
+def delete(table, id_):
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('DELETE FROM ? WHERE id = ?',
+                  (table, id_))
+        conn.commit()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return True
