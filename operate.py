@@ -72,6 +72,20 @@ def register_theorem(premises_id, conclusion_id, result_bool):
     return success
 
 
+def update_formula_good(id_, new_good):
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('UPDATE logic SET good = ? WHERE id = ?',
+                  (new_good, id_))
+        conn.commit()
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return
+
+
 def fetch_japanese(jid):
     conn = connect(DBPATH)
     c = conn.cursor()
