@@ -77,7 +77,7 @@ def reg_ja():
     posted = request.get_json()
     if 'japanese' in posted:
         ja = posted['japanese']
-        op.register_japanese()
+        op.register_japanese(ja)
         msg = 'Register: ' + ja
     else:
         msg = 'Fail to register'
