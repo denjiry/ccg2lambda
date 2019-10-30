@@ -95,26 +95,8 @@ update msg model =
                     , Cmd.none
                     )
 
-                Err httperror ->
-                    let
-                        retmessage =
-                            case httperror of
-                                Http.BadUrl str ->
-                                    "BadUrl:" ++ str
-
-                                Http.Timeout ->
-                                    "Timeout"
-
-                                Http.NetworkError ->
-                                    "NetworkError"
-
-                                Http.BadStatus code ->
-                                    "BadStatus:" ++ String.fromInt code
-
-                                Http.BadBody str ->
-                                    "BadBody:" ++ str
-                    in
-                    ( { model | message = "Http.Error:" ++ retmessage }
+                Err err ->
+                    ( { model | message = "Http.Error:" ++ handleHttpError err }
                     , Cmd.none
                     )
 
@@ -132,6 +114,24 @@ update msg model =
             ( { model | thState = newState }
             , Cmd.none
             )
+
+handleHttpError : Http.Error -> String
+handleHttpError httperror =
+    case httperror of
+        Http.BadUrl str ->
+            "BadUrl:" ++ str
+
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "NetworkError"
+
+        Http.BadStatus code ->
+            "BadStatus:" ++ String.fromInt code
+
+        Http.BadBody str ->
+            "BadBody:" ++ str
 
 
 
