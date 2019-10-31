@@ -172,7 +172,10 @@ view model =
             [ button [ onClick RefreshTables ] [ text "Refresh tables" ] ]
         , div []
             [ text "Reg JapaneseしたらRefresh tablesしてください"
-            ,viewForm "" model.formJa FormJapanese RegJapanese model.formJa "Reg Japanese" ]
+            , viewRegJa model
+            ]
+        , div []
+            [ viewRegLo ]
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -185,11 +188,17 @@ view model =
         ]
 
 
-viewForm : String -> String -> (String -> Msg) -> (String -> Msg) -> String -> String -> Html Msg
-viewForm p v toMsg regMsg form btnText =
+viewRegJa : Model -> Html Msg
+viewRegJa model =
     div []
-        [ input [ type_ "text", placeholder p, value v, onInput toMsg ] []
-        , button [ onClick (regMsg form) ] [ text btnText ]
+        [ input
+            [ type_ "text"
+            , placeholder "まずここに日本語を入力"
+            , value model.formJa
+            , onInput FormJapanese
+            ]
+            []
+        , button [ onClick (RegJapanese model.formja) ] [ text "Reg Japanese" ]
         ]
 
 
