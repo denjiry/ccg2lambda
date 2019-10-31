@@ -142,9 +142,9 @@ def update_good():
         if success is True:
             msg = 'Update formula: ' + id_ + ' good: ' + new_good 
         else:
-            msg = 'Fail to register:' + success
+            msg = 'Fail to update:' + success
     else:
-        msg = 'Fail to register: Wrong json'
+        msg = 'Fail to update: Wrong json'
     json = {
         'message': msg
     }
@@ -162,7 +162,7 @@ def transform():
         else:
             msg = 'Fail to transform:' + success
     else:
-        msg = 'Fail to register: Wrong json'
+        msg = 'Fail to transform: Wrong json'
     json = {
         'message': msg
     }
