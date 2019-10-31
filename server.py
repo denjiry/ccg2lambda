@@ -151,6 +151,24 @@ def update_good():
     return js.dumps(json)
 
 
+@app.route('/api/transform', methods=['POST'])
+def transform():
+    posted = request.get_json()
+    if 'jid' in posted:
+        jid = posted['jid']
+        success = op.transform(jid)
+        if success is True:
+            msg = 'Transform japanese: ' + jid
+        else:
+            msg = 'Fail to transform:' + success
+    else:
+        msg = 'Fail to register: Wrong json'
+    json = {
+        'message': msg
+    }
+    return js.dumps(json)
+
+
 @app.route('/api/try_prove', methods=['POST'])
 def try_prove():
     posted = request.get_json()
