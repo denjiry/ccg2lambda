@@ -51,6 +51,22 @@ type alias Model =
     , thState : Table.State
     , message : String
     , formJa : String
+    , formLogic : FormLogic
+    , formTheorem : FormTheorem
+    }
+
+
+type alias FormLogic =
+    { jid : Int
+    , formula : String
+    , types : String
+    }
+
+
+type alias FormTheorem =
+    { premises : String
+    , conclusion : Int
+    , result : String
     }
 
 
@@ -61,8 +77,12 @@ type Msg
     | SetLoTableState Table.State
     | SetThTableState Table.State
     | RegJapanese String
+    | RegLogic FormLogic
+    | RegTheorem FormTheorem
     | Registered (Result Http.Error String)
-    | FormJapanese String
+    | UpdateFormJapanese String
+    | UpdateFormLogic FormLogic
+    | UpdateFormTheorem FormTheorem
 
 
 
@@ -135,7 +155,7 @@ update msg model =
                     , Cmd.none
                     )
 
-        FormJapanese japanese ->
+        UpdateFormJapanese japanese ->
             ( { model | formJa = japanese }
             , Cmd.none
             )
@@ -170,12 +190,9 @@ view model =
         [ text model.message
         , div []
             [ button [ onClick RefreshTables ] [ text "Refresh tables" ] ]
-        , div []
-            [ text "Reg JapaneseしたらRefresh tablesしてください"
-            , viewRegJa model
-            ]
-        , div []
-            [ viewRegLo ]
+        , text "RegisterしたらRefresh tablesしてください"
+        , viewRegJa model
+        , viewRegLo model
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -188,17 +205,42 @@ view model =
         ]
 
 
-viewRegJa : Model -> Html Msg
-viewRegJa model =
+viewRegJa : String -> Html Msg
+viewRegJa formJa =
     div []
         [ input
             [ type_ "text"
             , placeholder "まずここに日本語を入力"
-            , value model.formJa
-            , onInput FormJapanese
+            , value formJa
+            , onInput UpdateFormJapanese
             ]
             []
-        , button [ onClick (RegJapanese model.formja) ] [ text "Reg Japanese" ]
+        , button [ onClick (RegJapanese formja) ] [ text "Reg Japanese" ]
+        ]
+
+
+viewRegLo : FormLogic -> Html Msg
+viewRegLo formLogic =
+    div []
+        [ input
+            [ type_ "int"
+            , placeholder "元の日本語のID"
+            , value formLogic.jid
+            , onInput (\v -> UpdateFormLogic { formLogic | jid = v })
+            ]
+        , input
+            [ type_ "text"
+            , placeholder "論理式"
+            , value formLogic.formula
+            , onInput (\v -> UpdateFormLogic { formLogic | formula = v })
+            ]
+        , input
+            [ type_ "text"
+            , placeholder "types"
+            , value formLogic.types
+            , onInput (\v -> UpdateFormLogic { formLogic | types = v })
+            ]
+        , button [ onClick (RegLogic formLogic) ]
         ]
 
 
