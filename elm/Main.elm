@@ -57,7 +57,7 @@ type alias Model =
 
 
 type alias FormLogic =
-    { jid : Int
+    { jid : String
     , formula : String
     , types : String
     }
@@ -65,7 +65,7 @@ type alias FormLogic =
 
 type alias FormTheorem =
     { premises : String
-    , conclusion : Int
+    , conclusion : String
     , result : String
     }
 
@@ -91,9 +91,19 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" ""
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem
     , getAllTable
     )
+
+
+initFormLogic : FormLogic
+initFormLogic =
+    { jid = "", formula = "", types = "" }
+
+
+initFormTheorem : FormTheorem
+initFormTheorem =
+    { premises = "", conclusion = "", result = "" }
 
 
 
@@ -160,6 +170,16 @@ update msg model =
             , Cmd.none
             )
 
+        UpdateFormLogic formLogic ->
+            ( { model | formLogic = formLogic }
+            , Cmd.none
+            )
+
+        UpdateFormTheorem formTheorem ->
+            ( { model | formTheorem = formTheorem }
+            , Cmd.none
+            )
+
 
 handleHttpError : Http.Error -> String
 handleHttpError httperror =
@@ -191,8 +211,9 @@ view model =
         , div []
             [ button [ onClick RefreshTables ] [ text "Refresh tables" ] ]
         , text "RegisterしたらRefresh tablesしてください"
-        , viewRegJa model
-        , viewRegLo model
+        , viewRegJa model.formJa
+        , viewRegLo model.formLogic
+        , viewRegTh model.formTheorem
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -215,7 +236,7 @@ viewRegJa formJa =
             , onInput UpdateFormJapanese
             ]
             []
-        , button [ onClick (RegJapanese formja) ] [ text "Reg Japanese" ]
+        , button [ onClick (RegJapanese formJa) ] [ text "Reg Japanese" ]
         ]
 
 
@@ -223,24 +244,27 @@ viewRegLo : FormLogic -> Html Msg
 viewRegLo formLogic =
     div []
         [ input
-            [ type_ "int"
+            [ type_ "text"
             , placeholder "元の日本語のID"
             , value formLogic.jid
             , onInput (\v -> UpdateFormLogic { formLogic | jid = v })
             ]
+            []
         , input
             [ type_ "text"
             , placeholder "論理式"
             , value formLogic.formula
             , onInput (\v -> UpdateFormLogic { formLogic | formula = v })
             ]
+            []
         , input
             [ type_ "text"
             , placeholder "types"
             , value formLogic.types
             , onInput (\v -> UpdateFormLogic { formLogic | types = v })
             ]
-        , button [ onClick (RegLogic formLogic) ]
+            []
+        , button [ onClick (RegLogic formLogic) ] [ text "Reg Logic" ]
         ]
 
 
@@ -253,19 +277,22 @@ viewRegTh formTheorem =
             , value formTheorem.premises
             , onInput (\v -> UpdateFormTheorem { formTheorem | premises = v })
             ]
+            []
         , input
             [ type_ "text"
             , placeholder "結論のID"
             , value formTheorem.conclusion
             , onInput (\v -> UpdateFormTheorem { formTheorem | conclusion = v })
             ]
+            []
         , input
             [ type_ "text"
             , placeholder "含意してる?"
             , value formTheorem.result
             , onInput (\v -> UpdateFormTheorem { formTheorem | result = v })
             ]
-        , button [ onClick (RegTheorem formTheorem) ]
+            []
+        , button [ onClick (RegTheorem formTheorem) ] [ text "Reg Theorem" ]
         ]
 
 
