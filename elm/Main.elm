@@ -244,6 +244,31 @@ viewRegLo formLogic =
         ]
 
 
+viewRegTh : FormTheorem -> Html Msg
+viewRegTh formTheorem =
+    div []
+        [ input
+            [ type_ "text"
+            , placeholder "前提のID(id1 & id2 & …)"
+            , value formTheorem.premises
+            , onInput (\v -> UpdateFormTheorem { formTheorem | premises = v })
+            ]
+        , input
+            [ type_ "text"
+            , placeholder "結論のID"
+            , value formTheorem.conclusion
+            , onInput (\v -> UpdateFormTheorem { formTheorem | conclusion = v })
+            ]
+        , input
+            [ type_ "text"
+            , placeholder "含意してる?"
+            , value formTheorem.result
+            , onInput (\v -> UpdateFormTheorem { formTheorem | result = v })
+            ]
+        , button [ onClick (RegTheorem formTheorem) ]
+        ]
+
+
 jaconfig : Table.Config Japanese Msg
 jaconfig =
     Table.config
