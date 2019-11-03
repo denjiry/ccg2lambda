@@ -103,7 +103,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem "" initFormTryprove
     , getAllTable
     )
 
@@ -116,6 +116,11 @@ initFormLogic =
 initFormTheorem : FormTheorem
 initFormTheorem =
     { premises = "", conclusion = "", result = "" }
+
+
+initFormTryprove : FormTryprove
+initFormTryprove =
+    { premises = "", conclusion = "" }
 
 
 
@@ -371,7 +376,7 @@ viewProve formTryprove =
             , onInput (\v -> UpdateFormTryprove { formTryprove | conclusion = v })
             ]
             []
-        , button [ onClick <| Tryprove formTryprove ] [ "含意関係認識" ]
+        , button [ onClick <| Tryprove formTryprove ] [ text "含意関係認識" ]
         ]
 
 
@@ -475,6 +480,33 @@ registerTheorem formTheorem =
                     [ ( "premises_id", Encode.string formTheorem.premises )
                     , ( "conclusion_id", Encode.int <| stringToInt formTheorem.conclusion )
                     , ( "result", Encode.string formTheorem.result )
+                    ]
+        , expect = Http.expectJson Registered messageDecoder
+        }
+
+
+transform : String -> Cmd Msg
+transform formTransform =
+    Http.post
+        { url = UB.relative [ apiUrl, "transform" ] []
+        , body =
+            Http.jsonBody <|
+                Encode.object
+                    [ ( "jid", Encode.int <| stringToInt formTransform )
+                    ]
+        , expect = Http.expectJson Registered messageDecoder
+        }
+
+
+tryprove : FormTryprove -> Cmd Msg
+tryprove formTryprove =
+    Http.post
+        { url = UB.relative [ apiUrl, "try_prove" ] []
+        , body =
+            Http.jsonBody <|
+                Encode.object
+                    [ ( "premises_id", Encode.string formTryprove.premises )
+                    , ( "conclusion_id", Encode.int <| stringToInt formTryprove.conclusion )
                     ]
         , expect = Http.expectJson Registered messageDecoder
         }
