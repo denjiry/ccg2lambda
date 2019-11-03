@@ -173,7 +173,7 @@ def transform():
 @app.route('/api/try_prove', methods=['POST'])
 def try_prove():
     posted = request.get_json()
-    if ('jid' in posted)and('formula' in posted)and('types' in posted):
+    if "premises_id" in posted and "conclusion_id" in posted:
         pre_id_text = posted['premises_id']
         c_id = posted['conclusion_id']
         pre_id = list(map(int, pre_id_text.split('&')))
