@@ -114,15 +114,15 @@ def reg_lo():
 @app.route('/api/reg_th', methods=['POST'])
 def reg_th():
     posted = request.get_json()
-    arguments = ['premises_id', 'conclusion_id', 'result_bool']
+    arguments = ['premises_id', 'conclusion_id', 'result']
     if all([el in posted for el in arguments]):
         pre_id_text = posted['premises_id']
         c_id = posted['conclusion_id']
-        result_bool = posted['result_bool']
+        result = posted['result']
         pre_id = list(map(int, pre_id_text.split('&')))
-        success = op.register_theorem(pre_id, c_id, result_bool)
+        success = op.register_theorem(pre_id, c_id, result)
         if success is True:
-            msg = 'Register: ' + pre_id_text + '->' + c_id + ':' + result_bool
+            msg = 'Register: ' + pre_id_text + '->' + c_id + ':' + result
         else:
             msg = 'Fail to register:' + success
     else:

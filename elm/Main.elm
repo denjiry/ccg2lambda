@@ -385,18 +385,35 @@ registerLogic : FormLogic -> Cmd Msg
 registerLogic formLogic =
     Http.post
         { url = UB.relative [ apiUrl, "reg_lo" ] []
-        , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string formLogic ) ])
+        , body =
+            Http.jsonBody <|
+                Encode.object
+                    [ ( "jid", Encode.int <| stringToInt formLogic.jid )
+                    , ( "formula", Encode.string formLogic.formula )
+                    , ( "types", Encode.string formLogic.types )
+                    ]
         , expect = Http.expectJson Registered messageDecoder
         }
 
 
 registerTheorem : FormTheorem -> Cmd Msg
-registerTheorem =
+registerTheorem formTheorem =
     Http.post
         { url = UB.relative [ apiUrl, "reg_th" ] []
-        , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string formTheorem ) ])
+        , body =
+            Http.jsonBody <|
+                Encode.object
+                    [ ( "premises_id", Encode.string formTheorem.premises )
+                    , ( "conclusion_id", Encode.int <| stringToInt formTheorem.conclusion )
+                    , ( "result", Encode.string formTheorem.result )
+                    ]
         , expect = Http.expectJson Registered messageDecoder
         }
+
+
+stringToInt : String -> Int
+stringToInt str =
+    Maybe.withDefault -1 <| String.toInt str
 
 
 messageDecoder : Decoder String
