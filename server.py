@@ -58,18 +58,23 @@ def show_task(taskid):
     return jsonify(json)
 
 
-@app.route('/tasks/<int:taskid>', methods=['DELETE'])
-def delete_task(taskid):
-    taskid = str(taskid)
-    if taskid in tasks:
-        del tasks[taskid]
-        msg = 'Task {} deleted'.format(taskid)
+@app.route('/api/delete', methods=['POST'])
+def delete_table():
+    posted = request.get_json()
+    if "table" in posted and "id" in posted:
+        table = posted['table']
+        id_ = posted['id']
+        success = op.delete(table, id_)
+        if success is True:
+            msg = 'Delete: ' + table + ":" + str(id_)
+        else:
+            msg = 'Fail to delete:' + success
     else:
-        msg = '{0} is not in tasks.'.format(taskid)
+        msg = 'Fail to delete: Wrong json'
     json = {
         'message': msg
     }
-    return jsonify(json)
+    return js.dumps(json)
 
 
 @app.route('/api/reg_ja', methods=['POST'])
@@ -141,7 +146,7 @@ def update_good():
         new_good = posted['new_good']
         success = op.update_formula_good(id_, new_good)
         if success is True:
-            msg = 'Update formula: ' + str(id_) + ' good: ' + str(new_good) 
+            msg = 'Update formula: ' + str(id_) + ' good: ' + str(new_good)
         else:
             msg = 'Fail to update:' + success
     else:
