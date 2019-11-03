@@ -99,7 +99,8 @@ def reg_lo():
         types = posted['types']
         success = op.register_japanese(jid, formula, types)
         if success is True:
-            msg = 'Register: jid=' + jid + ': '+ formula + ': types[' + types + ']'
+            msg = 'Register: jid=' + jid + ': ' + formula
+            msg += ': types[' + types + ']'
         else:
             msg = 'Fail to register:' + success
     else:
