@@ -55,6 +55,7 @@ type alias Model =
     , formTheorem : FormTheorem
     , formTransform : String
     , formTryprove : FormTryprove
+    , formGood : FormGood
     }
 
 
@@ -78,6 +79,12 @@ type alias FormTryprove =
     }
 
 
+type alias FormGood =
+    { id : String
+    , new_good : String
+    }
+
+
 type Msg
     = RefreshTables
     | GotTables (Result Http.Error AllTable)
@@ -89,12 +96,14 @@ type Msg
     | RegTheorem FormTheorem
     | Transform String
     | Tryprove FormTryprove
+    | UpdateGood FormGood
     | Registered (Result Http.Error String)
     | UpdateFormJapanese String
     | UpdateFormLogic FormLogic
     | UpdateFormTheorem FormTheorem
     | UpdateFormTransform String
     | UpdateFormTryprove FormTryprove
+    | UpdateFormGood FormGood
 
 
 
@@ -103,7 +112,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem "" initFormTryprove
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood
     , getAllTable
     )
 
@@ -121,6 +130,11 @@ initFormTheorem =
 initFormTryprove : FormTryprove
 initFormTryprove =
     { premises = "", conclusion = "" }
+
+
+initFormGood : FormGood
+initFormGood =
+    { id = "", new_good = "" }
 
 
 
@@ -190,6 +204,11 @@ update msg model =
             , tryprove formTryprove
             )
 
+        UpdateGood formGood ->
+            ( model
+            , updateGood formGood
+            )
+
         Registered result ->
             case result of
                 Ok message ->
@@ -224,6 +243,11 @@ update msg model =
 
         UpdateFormTryprove formTryprove ->
             ( { model | formTryprove = formTryprove }
+            , Cmd.none
+            )
+
+        UpdateFormGood formGood ->
+            ( { model | formGood = formGood }
             , Cmd.none
             )
 
@@ -263,6 +287,7 @@ view model =
         , viewRegTh model.formTheorem
         , viewTrans model.formTransform
         , viewProve model.formTryprove
+        , viewGood model.formGood
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -377,6 +402,27 @@ viewProve formTryprove =
             ]
             []
         , button [ onClick <| Tryprove formTryprove ] [ text "含意関係認識" ]
+        ]
+
+
+viewGood : FormGood -> Html Msg
+viewGood formGood =
+    div []
+        [ input
+            [ type_ "text"
+            , placeholder "論理式のID"
+            , value formGood.id
+            , onInput (\v -> UpdateFormGood { formGood | id = v })
+            ]
+            []
+        , input
+            [ type_ "text"
+            , placeholder "良さの度合い（数字）"
+            , value formGood.new_good
+            , onInput (\v -> UpdateFormGood { formGood | new_good = v })
+            ]
+            []
+        , button [ onClick <| UpdateGood formGood ] [ text "Update Good" ]
         ]
 
 
@@ -507,6 +553,20 @@ tryprove formTryprove =
                 Encode.object
                     [ ( "premises_id", Encode.string formTryprove.premises )
                     , ( "conclusion_id", Encode.int <| stringToInt formTryprove.conclusion )
+                    ]
+        , expect = Http.expectJson Registered messageDecoder
+        }
+
+
+updateGood : FormGood -> Cmd Msg
+updateGood formGood =
+    Http.post
+        { url = UB.relative [ apiUrl, "update_good" ] []
+        , body =
+            Http.jsonBody <|
+                Encode.object
+                    [ ( "id", Encode.int <| stringToInt formGood.id )
+                    , ( "new_good", Encode.int <| stringToInt formGood.new_good )
                     ]
         , expect = Http.expectJson Registered messageDecoder
         }
