@@ -122,7 +122,7 @@ def reg_th():
         pre_id = list(map(int, pre_id_text.split('&')))
         success = op.register_theorem(pre_id, c_id, result)
         if success is True:
-            msg = 'Register: ' + pre_id_text + '->' + c_id + ':' + result
+            msg = 'Register: ' + pre_id_text + '->' + str(c_id) + ':' + result
         else:
             msg = 'Fail to register:' + success
     else:
@@ -141,7 +141,7 @@ def update_good():
         new_good = posted['new_good']
         success = op.update_formula_good(id_, new_good)
         if success is True:
-            msg = 'Update formula: ' + id_ + ' good: ' + new_good 
+            msg = 'Update formula: ' + str(id_) + ' good: ' + str(new_good) 
         else:
             msg = 'Fail to update:' + success
     else:
@@ -159,7 +159,7 @@ def transform():
         jid = posted['jid']
         success = op.transform(jid)
         if success is True:
-            msg = 'Transform japanese: ' + jid
+            msg = 'Transform japanese: ' + str(jid)
         else:
             msg = 'Fail to transform:' + success
     else:
@@ -179,7 +179,7 @@ def try_prove():
         pre_id = list(map(int, pre_id_text.split('&')))
         success = op.try_prove(pre_id, c_id)
         if success is True:
-            msg = 'prove: ' + pre_id_text + '->' + c_id
+            msg = 'prove: ' + pre_id_text + '->' + str(c_id)
         else:
             msg = 'Fail to prove: one of errors:' + success[0]
     else:
