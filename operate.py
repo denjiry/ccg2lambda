@@ -128,7 +128,7 @@ def fetch_formula(fid):
 
 def try_prove(premises_id, conclusion_id):
     # fetch formulas
-    premises, dls = []
+    premises, dls = [], []
     for pid in premises_id:
         p, pdls = fetch_formula(pid)
         premises.append(p)
