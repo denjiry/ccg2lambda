@@ -153,6 +153,16 @@ update msg model =
             , registerJapanese japanese
             )
 
+        RegLogic formLogic ->
+            ( model
+            , registerLogic formLogic
+            )
+
+        RegTheorem formTheorem ->
+            ( model
+            , registerTheorem formTheorem
+            )
+
         Registered result ->
             case result of
                 Ok message ->
@@ -367,6 +377,24 @@ registerJapanese japanese =
     Http.post
         { url = UB.relative [ apiUrl, "reg_ja" ] []
         , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string japanese ) ])
+        , expect = Http.expectJson Registered messageDecoder
+        }
+
+
+registerLogic : FormLogic -> Cmd Msg
+registerLogic formLogic =
+    Http.post
+        { url = UB.relative [ apiUrl, "reg_lo" ] []
+        , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string formLogic ) ])
+        , expect = Http.expectJson Registered messageDecoder
+        }
+
+
+registerTheorem : FormTheorem -> Cmd Msg
+registerTheorem =
+    Http.post
+        { url = UB.relative [ apiUrl, "reg_th" ] []
+        , body = Http.jsonBody (Encode.object [ ( "japanese", Encode.string formTheorem ) ])
         , expect = Http.expectJson Registered messageDecoder
         }
 
