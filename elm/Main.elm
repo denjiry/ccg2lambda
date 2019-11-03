@@ -53,6 +53,8 @@ type alias Model =
     , formJa : String
     , formLogic : FormLogic
     , formTheorem : FormTheorem
+    , formTransform : String
+    , formTryprove : FormTryprove
     }
 
 
@@ -70,6 +72,12 @@ type alias FormTheorem =
     }
 
 
+type alias FormTryprove =
+    { premises : String
+    , conclusion : String
+    }
+
+
 type Msg
     = RefreshTables
     | GotTables (Result Http.Error AllTable)
@@ -79,10 +87,14 @@ type Msg
     | RegJapanese String
     | RegLogic FormLogic
     | RegTheorem FormTheorem
+    | Transform String
+    | Tryprove FormTryprove
     | Registered (Result Http.Error String)
     | UpdateFormJapanese String
     | UpdateFormLogic FormLogic
     | UpdateFormTheorem FormTheorem
+    | UpdateFormTransform String
+    | UpdateFormTryprove FormTryprove
 
 
 
@@ -163,6 +175,16 @@ update msg model =
             , registerTheorem formTheorem
             )
 
+        Transform formTransform ->
+            ( model
+            , transform formTransform
+            )
+
+        Tryprove formTryprove ->
+            ( model
+            , tryprove formTryprove
+            )
+
         Registered result ->
             case result of
                 Ok message ->
@@ -187,6 +209,16 @@ update msg model =
 
         UpdateFormTheorem formTheorem ->
             ( { model | formTheorem = formTheorem }
+            , Cmd.none
+            )
+
+        UpdateFormTransform formTransform ->
+            ( { model | formTransform = formTransform }
+            , Cmd.none
+            )
+
+        UpdateFormTryprove formTryprove ->
+            ( { model | formTryprove = formTryprove }
             , Cmd.none
             )
 
@@ -224,6 +256,8 @@ view model =
         , viewRegJa model.formJa
         , viewRegLo model.formLogic
         , viewRegTh model.formTheorem
+        , viewTrans model.formTransform
+        , viewProve model.formTryprove
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -303,6 +337,41 @@ viewRegTh formTheorem =
             ]
             []
         , button [ onClick (RegTheorem formTheorem) ] [ text "Reg Theorem" ]
+        ]
+
+
+viewTrans : String -> Html Msg
+viewTrans formTransform =
+    div []
+        [ input
+            [ type_ "text"
+            , placeholder "日本語の ID"
+            , value formTransform
+            , onInput UpdateFormTransform
+            ]
+            []
+        , button [ onClick <| Transform formTransform ] [ text "日本語 -> 論理式" ]
+        ]
+
+
+viewProve : FormTryprove -> Html Msg
+viewProve formTryprove =
+    div []
+        [ input
+            [ type_ "text"
+            , placeholder "前提のID(id1 & id2 & …)"
+            , value formTryprove.premises
+            , onInput (\v -> UpdateFormTryprove { formTryprove | premises = v })
+            ]
+            []
+        , input
+            [ type_ "text"
+            , placeholder "結論のID"
+            , value formTryprove.conclusion
+            , onInput (\v -> UpdateFormTryprove { formTryprove | conclusion = v })
+            ]
+            []
+        , button [ onClick <| Tryprove formTryprove ] [ "含意関係認識" ]
         ]
 
 
