@@ -56,6 +56,7 @@ type alias Model =
     , formTransform : String
     , formTryprove : FormTryprove
     , formGood : FormGood
+    , formDelete : FormDelete
     }
 
 
@@ -85,6 +86,12 @@ type alias FormGood =
     }
 
 
+type alias FormDelete =
+    { table : String
+    , id : String
+    }
+
+
 type Msg
     = RefreshTables
     | GotTables (Result Http.Error AllTable)
@@ -97,6 +104,7 @@ type Msg
     | Transform String
     | Tryprove FormTryprove
     | UpdateGood FormGood
+    | Delete FormDelete
     | Registered (Result Http.Error String)
     | UpdateFormJapanese String
     | UpdateFormLogic FormLogic
@@ -104,6 +112,7 @@ type Msg
     | UpdateFormTransform String
     | UpdateFormTryprove FormTryprove
     | UpdateFormGood FormGood
+    | UpdateFormDelete FormDelete
 
 
 
@@ -112,7 +121,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete
     , getAllTable
     )
 
@@ -135,6 +144,11 @@ initFormTryprove =
 initFormGood : FormGood
 initFormGood =
     { id = "", new_good = "" }
+
+
+initFormDelete : FormDelete
+initFormDelete =
+    { table = "", id = "" }
 
 
 
@@ -209,6 +223,11 @@ update msg model =
             , updateGood formGood
             )
 
+        Delete formDelete ->
+            ( model
+            , delete formDelete
+            )
+
         Registered result ->
             case result of
                 Ok message ->
@@ -251,6 +270,11 @@ update msg model =
             , Cmd.none
             )
 
+        UpdateFormDelete formDelete ->
+            ( { model | formDelete = formDelete }
+            , Cmd.none
+            )
+
 
 handleHttpError : Http.Error -> String
 handleHttpError httperror =
@@ -288,6 +312,7 @@ view model =
         , viewTrans model.formTransform
         , viewProve model.formTryprove
         , viewGood model.formGood
+        , viewDelete model.formDelete
         , Table.view jaconfig
             model.jaState
             model.jatable
@@ -423,6 +448,27 @@ viewGood formGood =
             ]
             []
         , button [ onClick <| UpdateGood formGood ] [ text "Update Good" ]
+        ]
+
+
+viewDelete : FormDelete -> Html Msg
+viewDelete formDelete =
+    div []
+        [ input
+            [ type_ "text"
+            , placeholder "tableの名前"
+            , value formDelete.table
+            , onInput (\v -> UpdateFormDelete { formDelete | table = v })
+            ]
+            []
+        , input
+            [ type_ "text"
+            , placeholder "消したいID"
+            , value formDelete.id
+            , onInput (\v -> UpdateFormDelete { formDelete | id = v })
+            ]
+            []
+        , button [ onClick <| Delete formDelete ] [ text "Delete a row" ]
         ]
 
 
@@ -567,6 +613,20 @@ updateGood formGood =
                 Encode.object
                     [ ( "id", Encode.int <| stringToInt formGood.id )
                     , ( "new_good", Encode.int <| stringToInt formGood.new_good )
+                    ]
+        , expect = Http.expectJson Registered messageDecoder
+        }
+
+
+delete : FormDelete -> Cmd Msg
+delete formDelete =
+    Http.post
+        { url = UB.relative [ apiUrl, "delete" ] []
+        , body =
+            Http.jsonBody <|
+                Encode.object
+                    [ ( "table", Encode.string formDelete.table )
+                    , ( "id", Encode.int <| stringToInt formDelete.id )
                     ]
         , expect = Http.expectJson Registered messageDecoder
         }

@@ -17,7 +17,7 @@ def delete_table():
         if success is True:
             msg = 'Delete: ' + table + ":" + str(id_)
         else:
-            msg = 'Fail to delete:' + success
+            msg = f'Fail to delete:{success}'
     else:
         msg = 'Fail to delete: Wrong json'
     json = {

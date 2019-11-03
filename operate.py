@@ -192,7 +192,7 @@ def delete(table, id_):
     conn = connect(DBPATH)
     c = conn.cursor()
     try:
-        c.execute('DELETE FROM ? WHERE id = ?',
+        c.execute('DELETE FROM  ?  WHERE id = ? ',
                   (table, id_))
         conn.commit()
         conn.close()
