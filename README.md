@@ -3,9 +3,9 @@
 This is a GUI Web application of ccg2lambda.
 
 ## Requirements
-- original ccg2lambda's requirements
-- Flask
-- Elm
+- original ccg2lambda's japanese requirements (bellow)
+- Flask (`pip install flask`)
+- Elm [official install docs](https://guide.elm-lang.org/install/elm.html)
 
 ## Usage
 
@@ -18,7 +18,7 @@ This is a GUI Web application of ccg2lambda.
 - ccg2lambda.py : few core functions. (wrapper of scripts/)
 - operate.py : handle japanese & logical formula using functions of ccg2lambda.py & SQLite.
 - server.py : flask server calling functions of operate.py
-- web/ : web frontend srcs (Elm only now)
+- elm/ : web frontend srcs (Elm only now)
 
 # --- Original README.md is below ---
 
