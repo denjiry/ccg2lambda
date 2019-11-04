@@ -160,7 +160,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RefreshTables ->
-            ( { model | message = "Refreshing..." }, getAllTable )
+            ( { model | msgRefreshTables = "Refreshing..." }, getAllTable )
 
         GotTables result ->
             case result of
@@ -180,60 +180,40 @@ update msg model =
                     )
 
         SetJaTableState newState ->
-            ( { model | jaState = newState }
-            , Cmd.none
-            )
+            ( { model | jaState = newState }, Cmd.none )
 
         SetLoTableState newState ->
-            ( { model | loState = newState }
-            , Cmd.none
-            )
+            ( { model | loState = newState }, Cmd.none )
 
         SetThTableState newState ->
-            ( { model | thState = newState }
-            , Cmd.none
-            )
+            ( { model | thState = newState }, Cmd.none )
 
         RegJapanese japanese ->
-            ( model
-            , registerJapanese japanese
-            )
+            ( model, registerJapanese japanese )
 
         RegLogic formLogic ->
-            ( model
-            , registerLogic formLogic
-            )
+            ( model, registerLogic formLogic )
 
         RegTheorem formTheorem ->
-            ( model
-            , registerTheorem formTheorem
-            )
+            ( model, registerTheorem formTheorem )
 
         Transform formTransform ->
-            ( model
-            , transform formTransform
-            )
+            ( model, transform formTransform )
 
         Tryprove formTryprove ->
-            ( model
-            , tryprove formTryprove
-            )
+            ( model, tryprove formTryprove )
 
         UpdateGood formGood ->
-            ( model
-            , updateGood formGood
-            )
+            ( model, updateGood formGood )
 
         Delete formDelete ->
-            ( model
-            , delete formDelete
-            )
+            ( model, delete formDelete )
 
         Registered result ->
             case result of
                 Ok message ->
                     ( { model | message = message }
-                    , Cmd.none
+                    , getAllTable
                     )
 
                 Err err ->
@@ -242,39 +222,25 @@ update msg model =
                     )
 
         UpdateFormJapanese japanese ->
-            ( { model | formJa = japanese }
-            , Cmd.none
-            )
+            ( { model | formJa = japanese }, Cmd.none )
 
         UpdateFormLogic formLogic ->
-            ( { model | formLogic = formLogic }
-            , Cmd.none
-            )
+            ( { model | formLogic = formLogic }, Cmd.none )
 
         UpdateFormTheorem formTheorem ->
-            ( { model | formTheorem = formTheorem }
-            , Cmd.none
-            )
+            ( { model | formTheorem = formTheorem }, Cmd.none )
 
         UpdateFormTransform formTransform ->
-            ( { model | formTransform = formTransform }
-            , Cmd.none
-            )
+            ( { model | formTransform = formTransform }, Cmd.none )
 
         UpdateFormTryprove formTryprove ->
-            ( { model | formTryprove = formTryprove }
-            , Cmd.none
-            )
+            ( { model | formTryprove = formTryprove }, Cmd.none )
 
         UpdateFormGood formGood ->
-            ( { model | formGood = formGood }
-            , Cmd.none
-            )
+            ( { model | formGood = formGood }, Cmd.none )
 
         UpdateFormDelete formDelete ->
-            ( { model | formDelete = formDelete }
-            , Cmd.none
-            )
+            ( { model | formDelete = formDelete }, Cmd.none )
 
 
 handleHttpError : Http.Error -> String
@@ -315,15 +281,15 @@ view model =
         , viewProve model.formTryprove
         , viewGood model.formGood
         , viewDelete model.formDelete
-        , h4 [] [ text "日本語テーブル" ]
+        , h4 [] [ text "日本語テーブル(japanese)" ]
         , Table.view jaconfig
             model.jaState
             model.jatable
-        , h4 [] [ text "定理テーブル" ]
+        , h4 [] [ text "定理テーブル(theorem)" ]
         , Table.view thconfig
             model.thState
             model.thtable
-        , h4 [] [ text "論理式テーブル" ]
+        , h4 [] [ text "論理式テーブル(logic)" ]
         , Table.view loconfig
             model.loState
             model.lotable
