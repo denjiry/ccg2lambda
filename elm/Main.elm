@@ -313,12 +313,15 @@ view model =
         , viewProve model.formTryprove
         , viewGood model.formGood
         , viewDelete model.formDelete
+        , h4 [] [ text "日本語テーブル" ]
         , Table.view jaconfig
             model.jaState
             model.jatable
+        , h4 [] [ text "定理テーブル" ]
         , Table.view thconfig
             model.thState
             model.thtable
+        , h4 [] [ text "論理式テーブル" ]
         , Table.view loconfig
             model.loState
             model.lotable
