@@ -50,6 +50,7 @@ type alias Model =
     , thtable : List Theorem
     , thState : Table.State
     , message : String
+    , msgRefreshTables : String
     , formJa : String
     , formLogic : FormLogic
     , formTheorem : FormTheorem
@@ -121,7 +122,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete
     , getAllTable
     )
 
@@ -168,13 +169,13 @@ update msg model =
                         | jatable = alltable.jatable
                         , lotable = alltable.lotable
                         , thtable = alltable.thtable
-                        , message = "success to fetch alltable"
+                        , msgRefreshTables = "success to fetch alltable"
                       }
                     , Cmd.none
                     )
 
                 Err err ->
-                    ( { model | message = "Http.Error:" ++ handleHttpError err }
+                    ( { model | msgRefreshTables = "Http.Error:" ++ handleHttpError err }
                     , Cmd.none
                     )
 
@@ -302,10 +303,11 @@ handleHttpError httperror =
 view : Model -> Html Msg
 view model =
     div []
-        [ text model.message
+        [ text model.msgRefreshTables
         , div []
             [ button [ onClick RefreshTables ] [ text "Refresh tables" ] ]
-        , text "RegisterしたらRefresh tablesしてください"
+        , text "ボタンを押したらRefresh tablesしてください"
+        , div [] [ text <| "Server Response -> " ++ model.message ]
         , viewRegJa model.formJa
         , viewRegLo model.formLogic
         , viewRegTh model.formTheorem
