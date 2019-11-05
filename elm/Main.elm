@@ -275,12 +275,13 @@ view model =
                             model.thtable
                     ]
                 ]
-            , column [ width fill ]
+            , column [ width fill, El.clip ]
                 [ El.text "論理式テーブル(logic)"
-                , El.html <|
-                    Table.view loconfig
-                        model.loState
-                        model.lotable
+                , el [ El.clip ] <|
+                    El.html <|
+                        Table.view loconfig
+                            model.loState
+                            model.lotable
                 ]
             ]
         ]
