@@ -13,33 +13,19 @@ import Url.Builder as UB
 
 
 type alias Japanese =
-    { id : Int
-    , japanese : String
-    }
+    { id : Int, japanese : String }
 
 
 type alias Logic =
-    { id : Int
-    , jid : Int
-    , formula : String
-    , types : String
-    , good : Int
-    }
+    { id : Int, jid : Int, formula : String, types : String, good : Int }
 
 
 type alias Theorem =
-    { id : Int
-    , premises : String
-    , conclusion : Int
-    , result : String
-    }
+    { id : Int, premises : String, conclusion : Int, result : String }
 
 
 type alias AllTable =
-    { jatable : List Japanese
-    , lotable : List Logic
-    , thtable : List Theorem
-    }
+    { jatable : List Japanese, lotable : List Logic, thtable : List Theorem }
 
 
 type alias Model =
@@ -62,35 +48,23 @@ type alias Model =
 
 
 type alias FormLogic =
-    { jid : String
-    , formula : String
-    , types : String
-    }
+    { jid : String, formula : String, types : String }
 
 
 type alias FormTheorem =
-    { premises : String
-    , conclusion : String
-    , result : String
-    }
+    { premises : String, conclusion : String, result : String }
 
 
 type alias FormTryprove =
-    { premises : String
-    , conclusion : String
-    }
+    { premises : String, conclusion : String }
 
 
 type alias FormGood =
-    { id : String
-    , new_good : String
-    }
+    { id : String, new_good : String }
 
 
 type alias FormDelete =
-    { table : String
-    , id : String
-    }
+    { table : String, id : String }
 
 
 type Msg
