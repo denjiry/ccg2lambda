@@ -6,7 +6,15 @@ This is a GUI Web application of ccg2lambda.
 - Java
 - Elm [official install docs](https://guide.elm-lang.org/install/elm.html)
 - Python >=3.7.1 (any version where sqlite3 accepts pathlib.Path)
-- ```pip install flask lxml simplejson pyyaml -I nltk==3.0.5 && \ source ./ja/download_dependencies.sh && \ cp ja/coqlib_ja.v coqlib.v && \ coqc coqlib.v && \ cp ja/tactics_coq_ja.txt tactics_coq.txt```
+
+## installation (download packages & copy & compile coq)
+```bash
+pip install flask lxml simplejson pyyaml -I nltk==3.0.5 && \
+source ./ja/download_dependencies.sh && \
+cp ja/coqlib_ja.v coqlib.v && \
+coqc coqlib.v && \
+cp ja/tactics_coq_ja.txt tactics_coq.txt
+```
 
 ## Usage
 
