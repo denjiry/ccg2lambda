@@ -1,9 +1,10 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Element as El
+import Html exposing (Html, button, div, h4, input, text)
+import Html.Attributes exposing (placeholder, type_, value)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Json.Encode as Encode
@@ -475,7 +476,6 @@ thtoid th =
 
 
 -- http
--- curl -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' -d '{"task": "映画館に行く"}' localhost:5000/tasks
 
 
 apiUrl : String
