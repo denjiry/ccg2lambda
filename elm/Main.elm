@@ -663,5 +663,5 @@ main =
         { init = init
         , update = update
         , subscriptions = \_ -> Sub.none
-        , view = layout [] <| view
+        , view = \m -> layout [] <| view m
         }
