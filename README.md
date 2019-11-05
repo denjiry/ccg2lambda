@@ -4,6 +4,7 @@ This is a GUI Web application of ccg2lambda.
 
 ## Requirements
 - original ccg2lambda's japanese requirements (bellow)
+- Python >=3.7.1
 - Flask (`pip install flask`)
 - Elm [official install docs](https://guide.elm-lang.org/install/elm.html)
 
