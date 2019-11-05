@@ -460,7 +460,6 @@ loconfig =
             [ Table.intColumn "Id" .id
             , Table.intColumn "Jid" .jid
             , Table.stringColumn "Formula" .formula
-            , Table.stringColumn "Types" .types
             , Table.intColumn "Good" .good
             ]
         }
