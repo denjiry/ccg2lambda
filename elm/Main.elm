@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser
-import Element as El
+import Debug
+import Element as El exposing (Element, column, el, explain, fill, height, html, layout, row, width)
 import Html exposing (Html, button, div, h4, input, text)
 import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
@@ -241,33 +242,47 @@ handleHttpError httperror =
 -- view
 
 
-view : Model -> Html Msg
+view : Model -> Element Msg
 view model =
-    div []
-        [ text model.msgRefreshTables
-        , div []
-            [ button [ onClick RefreshTables ] [ text "Refresh tables" ] ]
-        , text "ボタンを押したらRefresh tablesしてください"
-        , div [] [ text <| "Server Response -> " ++ model.message ]
-        , viewRegJa model.formJa
-        , viewRegLo model.formLogic
-        , viewRegTh model.formTheorem
-        , viewTrans model.formTransform
-        , viewProve model.formTryprove
-        , viewGood model.formGood
-        , viewDelete model.formDelete
-        , h4 [] [ text "日本語テーブル(japanese)" ]
-        , Table.view jaconfig
-            model.jaState
-            model.jatable
-        , h4 [] [ text "定理テーブル(theorem)" ]
-        , Table.view thconfig
-            model.thState
-            model.thtable
-        , h4 [] [ text "論理式テーブル(logic)" ]
-        , Table.view loconfig
-            model.loState
-            model.lotable
+    column []
+        [ column []
+            [ El.text model.msgRefreshTables
+            , html <| button [ onClick RefreshTables ] [ text "Refresh tables" ]
+            , El.text <| "Server Response -> " ++ model.message
+            , html <| viewRegJa model.formJa
+            , html <| viewRegLo model.formLogic
+            , html <| viewRegTh model.formTheorem
+            , html <| viewTrans model.formTransform
+            , html <| viewProve model.formTryprove
+            , html <| viewGood model.formGood
+            , html <| viewDelete model.formDelete
+            ]
+        , column
+            [ width fill, height fill, El.scrollbarY ]
+            [ row [ width fill ]
+                [ column []
+                    [ El.text "日本語テーブル(japanese)"
+                    , html <|
+                        Table.view jaconfig
+                            model.jaState
+                            model.jatable
+                    ]
+                , column [ height fill ]
+                    [ El.text "定理テーブル(theorem)"
+                    , html <|
+                        Table.view thconfig
+                            model.thState
+                            model.thtable
+                    ]
+                ]
+            , column [ width fill ]
+                [ El.text "論理式テーブル(logic)"
+                , El.html <|
+                    Table.view loconfig
+                        model.loState
+                        model.lotable
+                ]
+            ]
         ]
 
 
@@ -648,5 +663,5 @@ main =
         { init = init
         , update = update
         , subscriptions = \_ -> Sub.none
-        , view = view
+        , view = layout [] <| view
         }
