@@ -3,10 +3,10 @@
 This is a GUI Web application of ccg2lambda.
 
 ## Requirements
-- original ccg2lambda's japanese requirements (bellow)
-- Python >=3.7.1
-- Flask (`pip install flask`)
+- Java
 - Elm [official install docs](https://guide.elm-lang.org/install/elm.html)
+- Python >=3.7.1 (any version where sqlite3 accepts pathlib.Path)
+- ```pip install flask lxml simplejson pyyaml -I nltk==3.0.5 && \ source ./ja/download_dependencies.sh && \ cp ja/coqlib_ja.v coqlib.v && \ coqc coqlib.v && \ cp ja/tactics_coq_ja.txt tactics_coq.txt```
 
 ## Usage
 
