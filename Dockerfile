@@ -42,52 +42,32 @@ RUN sed -i -s '/debian jessie-updates main/d' /etc/apt/sources.list && \
     python -c "import nltk; nltk.download('wordnet')"
 
 WORKDIR /app
-ADD . /app
-
-# Install C&C
-WORKDIR /app/parsers
-ADD http://www.cl.cam.ac.uk/~sc609/resources/candc-downloads/candc-linux-1.00.tgz /app/parsers/candc-linux-1.00.tgz
-RUN tar xvf candc-linux-1.00.tgz
-WORKDIR /app/parsers/candc-1.00
-ADD http://www.cl.cam.ac.uk/~sc609/resources/candc-downloads/models-1.02.tgz /app/parsers/candc-1.00/models-1.02.tgz
-RUN tar xvf models-1.02.tgz && \
-    echo "/app/parsers/candc-1.00" >> /app/en/candc_location.txt && \
-    echo "candc:/app/parsers/candc-1.00" >> /app/en/parser_location.txt
-
-# Install easyccg
-WORKDIR /app/parsers/easyccg
-COPY --from=build-env /build/easyccg/easyccg.jar /app/parsers/easyccg/easyccg.jar
-ADD https://drive.google.com/uc?export=download&id=0B7AY6PGZ8lc-dUN4SDcxWkczM2M /app/parsers/easyccg/model.tar.gz
-RUN tar xvf model.tar.gz && \
-    echo "easyccg:"`pwd` >> /app/en/parser_location.txt
-
-# Install EasySRL
-WORKDIR /app/parsers/EasySRL
-COPY --from=build-env /build/EasySRL/easysrl.jar /app/parsers/EasySRL/easysrl.jar
-# Download model file (the ugly script is due to downloading the large file from Google Drive)
-RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet \
-    --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate \
-    'https://docs.google.com/uc?export=download&id=0B7AY6PGZ8lc-R1E3aTA5WG54bWM' -O- | \
-    sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=0B7AY6PGZ8lc-R1E3aTA5WG54bWM" -O model.tar.gz 2> /dev/null && \
-    rm -rf /tmp/cookies.txt && \
-    tar xvf model.tar.gz && \
-    echo "easysrl:/app/parsers/EasySRL/" >> /app/en/parser_location.txt
 
 # Install Jigg
 COPY --from=build-env /build/jigg-v-0.4/jar/jigg-0.4.jar /app/parsers/jigg-v-0.4/jar/jigg-0.4.jar
 ADD https://github.com/mynlp/jigg/releases/download/v-0.4/ccg-models-0.4.jar /app/parsers/jigg-v-0.4/jar/
+WORKDIR /app/ja
 RUN echo "/app/parsers/jigg-v-0.4" > /app/ja/jigg_location.txt && \
     echo "jigg:/app/parsers/jigg-v-0.4" >> /app/ja/parser_location_ja.txt
 
 # Install depccg
-RUN pip install depccg && \
-    python -m depccg en download && \
-    python -m depccg ja download && \
-    echo "depccg:" >> /app/en/parser_location.txt && \
-    echo "depccg:" >> /app/ja/parser_location_ja.txt
+# RUN pip install depccg && \
+#     python -m depccg en download && \
+#     python -m depccg ja download && \
+#     echo "depccg:" >> /app/en/parser_location.txt && \
+#     echo "depccg:" >> /app/ja/parser_location_ja.txt
+RUN pip install flask
+
+WORKDIR /usr/local/bin
+RUN curl -L -o elm.gz https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz && gunzip elm.gz && chmod +x elm
 
 WORKDIR /app
-RUN cp ./en/coqlib_sick.v ./coqlib.v && coqc coqlib.v && \
-    cp ./en/tactics_coq_sick.txt ./tactics_coq.txt
-# CMD ["en/rte_en_mp_any.sh", "en/sample_en.txt", "en/semantic_templates_en_emnlp2015.yaml"]
-CMD ["/bin/bash"]
+ADD . /app
+RUN cp ./ja/coqlib_ja.v ./coqlib.v && coqc coqlib.v && \
+    cp ./ja/tactics_coq_ja.txt ./tactics_coq.txt
+# CMD ["/bin/bash"]
+
+WORKDIR /app
+RUN elm make elm/Main.elm --output main.html
+EXPOSE 9999
+CMD ["python", "server.py"]
