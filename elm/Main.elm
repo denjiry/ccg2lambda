@@ -459,7 +459,7 @@ loconfig =
         , columns =
             [ Table.intColumn "Id" .id
             , Table.intColumn "Jid" .jid
-            , Table.stringColumn "Formula" .formula
+            , Table.stringColumn "Formula" (\l -> prettifyFormula l.formula)
             , Table.intColumn "Good" .good
             ]
         }
@@ -468,6 +468,30 @@ loconfig =
 lotoid : Logic -> String
 lotoid lo =
     String.fromInt lo.id
+
+
+prettifyFormula : String -> String
+prettifyFormula formula =
+    let
+        replaceList =
+            [ ( "exists", "∃" )
+            , ( "all", "∀" )
+            ]
+    in
+    mapreduce String.replace replaceList formula
+
+
+mapreduce : (a -> a -> a -> a) -> List ( a, a ) -> a -> a
+mapreduce f list i =
+    case list of
+        [] ->
+            i
+
+        [ ( fst, snd ) ] ->
+            f fst snd i
+
+        ( fst, snd ) :: xs ->
+            f fst snd <| mapreduce f xs i
 
 
 thconfig : Table.Config Theorem Msg
