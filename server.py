@@ -134,6 +134,8 @@ def try_prove():
         success = op.try_prove(pre_id, c_id)
         if success is True:
             msg = 'prove: ' + pre_id_text + '->' + str(c_id)
+        elif success is False:
+            msg = 'not proved: ' + pre_id_text + '->' + str(c_id)
         else:
             msg = 'Fail to prove: one of errors:' + success[0]
     else:
