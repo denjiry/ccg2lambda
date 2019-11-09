@@ -478,20 +478,12 @@ prettifyFormula formula =
             , ( "all", "∀" )
             ]
     in
-    mapreduce String.replace replaceList formula
+    List.foldl uncurriedReplace formula replaceList
 
 
-mapreduce : (a -> a -> a -> a) -> List ( a, a ) -> a -> a
-mapreduce f list i =
-    case list of
-        [] ->
-            i
-
-        [ ( fst, snd ) ] ->
-            f fst snd i
-
-        ( fst, snd ) :: xs ->
-            f fst snd <| mapreduce f xs i
+uncurriedReplace : ( String, String ) -> String -> String
+uncurriedReplace ( a, b ) c =
+    String.replace a b c
 
 
 thconfig : Table.Config Theorem Msg
