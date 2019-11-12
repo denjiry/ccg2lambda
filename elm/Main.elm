@@ -476,6 +476,8 @@ prettifyFormula formula =
         replaceList =
             [ ( "exists", "∃" )
             , ( "all", "∀" )
+            , ( "True & ", "" )
+            , ( " & True", "" )
             ]
     in
     List.foldl uncurriedReplace formula replaceList
