@@ -105,7 +105,7 @@ def transform(jid):
     if isinstance(japanese, Error):
         return japanese  # as Exception
     dls, formulas_str = j2l(japanese)
-    rets = [register_formula(jid, f, dls) for f in formulas_str]
+    rets = [register_formula(jid, f, dls) for f in set(formulas_str)]
     if all(rets):
         return True
     else:
