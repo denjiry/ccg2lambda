@@ -84,11 +84,14 @@ def filter_formulas(formulas):
     filtered_formulas = []
     for f in formulas:
         try:
-            logic_parser.parse(f)
+            parsed = logic_parser.parse(f)
         except LogicalExpressionException:
             continue
-        filtered_formulas.append(f)
-    return filtered_formulas
+        if parsed in filtered_formulas:
+            continue
+        filtered_formulas.append(parsed)
+    filtered_formulas_str = list(map(str, filtered_formulas))
+    return filtered_formulas_str
 
 
 def j2l(japanese_input):
