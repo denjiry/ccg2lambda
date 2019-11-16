@@ -15,7 +15,7 @@ def delete_table():
         id_ = posted['id']
         success = op.delete(table, id_)
         if success is True:
-            msg = 'Delete: ' + table + ":" + str(id_)
+            msg = f'Delete: {table}:{id_}'
         else:
             msg = f'Fail to delete:{success}'
     else:
@@ -33,9 +33,9 @@ def reg_ja():
         ja = posted['japanese']
         success = op.register_japanese(ja)
         if success is True:
-            msg = 'Register: ' + ja
+            msg = f'Register: {ja}'
         else:
-            msg = 'Fail to register:' + success
+            msg = f'Fail to register:{success}'
     else:
         msg = 'Fail to register: Wrong json'
     json = {
@@ -53,10 +53,9 @@ def reg_lo():
         types = posted['types']
         success = op.register_formula(jid, formula, types)
         if success is True:
-            msg = 'Register: jid=' + jid + ': ' + formula
-            msg += ': types[' + types + ']'
+            msg = f'Register: jid={jid}:{formula}: types[{types}]'
         else:
-            msg = 'Fail to register:' + success
+            msg = f'Fail to register:{success}'
     else:
         msg = 'Fail to register: Wrong json'
     json = {
@@ -76,9 +75,9 @@ def reg_th():
         pre_id = list(map(int, pre_id_text.split('&')))
         success = op.register_theorem(pre_id, c_id, result)
         if success is True:
-            msg = 'Register: ' + pre_id_text + '->' + str(c_id) + ':' + result
+            msg = f'Register: {pre_id_text}->{c_id}:{result}'
         else:
-            msg = 'Fail to register:' + success
+            msg = f'Fail to register:{success}'
     else:
         msg = 'Fail to register: Wrong json'
     json = {
@@ -95,9 +94,9 @@ def update_good():
         new_good = posted['new_good']
         success = op.update_formula_good(id_, new_good)
         if success is True:
-            msg = 'Update formula: ' + str(id_) + ' good: ' + str(new_good)
+            msg = f'Update formula: {id_} good:{new_good}'
         else:
-            msg = 'Fail to update:' + success
+            msg = f'Fail to update:{success}'
     else:
         msg = 'Fail to update: Wrong json'
     json = {
@@ -113,9 +112,9 @@ def transform():
         jid = posted['jid']
         success = op.transform(jid)
         if success is True:
-            msg = 'Transform japanese: ' + str(jid)
+            msg = f'Transform japanese: {jid}'
         else:
-            msg = 'Fail to transform:' + success
+            msg = f'Fail to transform:{success}'
     else:
         msg = 'Fail to transform: Wrong json'
     json = {
@@ -133,11 +132,11 @@ def try_prove():
         pre_id = list(map(int, pre_id_text.split('&')))
         success = op.try_prove(pre_id, c_id)
         if success is True:
-            msg = 'prove: ' + pre_id_text + '->' + str(c_id)
+            msg = f'prove: {pre_id_text}->{c_id}'
         elif success is False:
-            msg = 'not proved: ' + pre_id_text + '->' + str(c_id)
+            msg = f'not proved: {pre_id_text}->{c_id}'
         else:
-            msg = 'Fail to prove: one of errors:' + success[0]
+            msg = f'Fail to prove: one of errors:{success[0]}'
     else:
         msg = 'Fail to prove: Wrong json'
     json = {
