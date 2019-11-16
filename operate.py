@@ -1,5 +1,6 @@
 from sqlite3 import connect, Error
 from pathlib import Path
+import json
 
 from scripts.logic_parser import logic_parser, LogicalExpressionException
 from ccg2lambda import j2l, prove
@@ -200,3 +201,15 @@ def delete(table, id_):
         conn.close()
         return e
     return True
+
+
+def dumptable(filename):
+    japanese = info_japanese()
+    logic_table = info_logic()
+    theorems = info_theorem()
+    alltable = {"jatable": japanese,
+                "lotable": logic_table,
+                "thtable": theorems}
+    alltablejs = json.dumps(alltable)
+    with open(filename, 'w') as f:
+        f.write(alltablejs)
