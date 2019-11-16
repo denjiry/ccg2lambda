@@ -213,3 +213,26 @@ def dumptable(filename):
     alltablejs = json.dumps(alltable)
     with open(filename, 'w') as f:
         f.write(alltablejs)
+    return
+
+
+def load_alltable(jsonfilename):
+    with open(jsonfilename, 'r') as f:
+        loaded_json = json.load(f)
+    jatable = loaded_json['jatable']
+    lotable = loaded_json['lotable']
+    thtable = loaded_json['thtable']
+    for _, japanese in jatable:
+        _ex('INSERT INTO japanese (japanese) VALUES (?)',
+            japanese)
+
+    for _, jid, formula, types, good in lotable:
+        _ex('''INSERT INTO logic (jid, formula, types, good)
+            VALUES (?, ?, ?, ?)''',
+            (jid, formula, types, good))
+
+    for _, premises_id_text, c_id, result_text in thtable:
+        _ex('''INSERT INTO theorem (premises, conclusion, result)
+            VALUES (?, ?, ?)''',
+            (premises_id_text, c_id, result_text))
+    return
