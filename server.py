@@ -51,7 +51,7 @@ def reg_lo():
         jid = posted['jid']
         formula = posted['formula']
         types = posted['types']
-        success = op.register_japanese(jid, formula, types)
+        success = op.register_formula(jid, formula, types)
         if success is True:
             msg = 'Register: jid=' + jid + ': ' + formula
             msg += ': types[' + types + ']'
