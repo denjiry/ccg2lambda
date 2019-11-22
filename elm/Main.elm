@@ -672,6 +672,33 @@ thtableDecoder =
 
 
 
+-- Tree
+
+
+findRoot thtable =
+    let
+        allleaf =
+            List.foldl (\th l -> theoremToPremises th ++ l) [] thtable
+    in
+    List.filter (\v -> not <| List.member v.conclusion allleaf) thtable
+
+
+theoremToPremises th =
+    toListInt th.premises
+
+
+toListInt : String -> List Int
+toListInt str =
+    let
+        splitList =
+            List.map String.trim <|
+                List.filter ((/=) "") <|
+                    String.split "&" str
+    in
+    List.map (\s -> Maybe.withDefault -1 <| String.toInt s) splitList
+
+
+
 -- Main
 
 
