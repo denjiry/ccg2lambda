@@ -1,7 +1,8 @@
-module Main exposing (main)
+module Main exposing (findRoot, main)
 
 import Browser
 import Debug
+import Dict exposing (Dict)
 import Element as El exposing (Element, column, el, explain, fill, height, html, layout, row, width)
 import Html exposing (Html, button, div, h4, input, text)
 import Html.Attributes exposing (placeholder, type_, value)
@@ -682,12 +683,30 @@ constructTree thtable =
         roots =
             findRoot thtable
     in
-    List.map (\r -> Tree.unfold unfolder r) roots
+    List.map (\r -> Tree.unfold (unfolder thtable) r) roots
 
 
-unfolder : Theorem -> ( Theorem, List Theorem )
-unfolder th =
-    th
+unfolder : List Theorem -> Theorem -> ( Theorem, List Theorem )
+unfolder thtable th =
+    let
+        premises =
+            theoremToPremises th
+    in
+    ( th, List.foldl (\i l -> idToTheorem thtable i ++ l) [] premises )
+
+
+idToTheorem : List Theorem -> Int -> List Theorem
+idToTheorem thtable id =
+    List.filter (\th -> th.conclusion == id) thtable
+
+
+dictThTable : List Theorem -> Dict Int (List Int)
+dictThTable thtable =
+    let
+        extract th =
+            ( th.conclusion, theoremToPremises th )
+    in
+    Dict.fromList <| List.map extract thtable
 
 
 findRoot thtable =
