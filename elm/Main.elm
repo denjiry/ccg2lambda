@@ -678,47 +678,44 @@ thtableDecoder =
 -- Tree
 
 
-constructTree thtable =
+buildForest thtable =
     let
         roots =
             findRoot thtable
+
+        dthtable =
+            dictThTable thtable
     in
-    List.map (\r -> Tree.unfold (unfolder thtable) r) roots
+    List.map (\r -> Tree.unfold (unfolder dthtable) r) roots
 
 
-unfolder : List Theorem -> Theorem -> ( Theorem, List Theorem )
-unfolder thtable th =
-    let
-        premises =
-            theoremToPremises th
-    in
-    ( th, List.foldl (\i l -> idToTheorem thtable i ++ l) [] premises )
+unfolder : Dict Int (List Int) -> Int -> ( Int, List Int )
+unfolder dthtable seed =
+    case Dict.get seed dthtable of
+        Just premises ->
+            ( seed, premises )
 
-
-idToTheorem : List Theorem -> Int -> List Theorem
-idToTheorem thtable id =
-    List.filter (\th -> th.conclusion == id) thtable
+        Nothing ->
+            ( seed, [] )
 
 
 dictThTable : List Theorem -> Dict Int (List Int)
 dictThTable thtable =
     let
         extract th =
-            ( th.conclusion, theoremToPremises th )
+            ( th.conclusion, toListInt th.premises )
     in
     Dict.fromList <| List.map extract thtable
 
 
+findRoot : List Theorem -> List Int
 findRoot thtable =
     let
         allleaf =
-            List.foldl (\th l -> theoremToPremises th ++ l) [] thtable
+            List.foldl (\th l -> toListInt th.premises ++ l) [] thtable
     in
     List.filter (\v -> not <| List.member v.conclusion allleaf) thtable
-
-
-theoremToPremises th =
-    toListInt th.premises
+        |> List.map (\th -> th.conclusion)
 
 
 toListInt : String -> List Int
