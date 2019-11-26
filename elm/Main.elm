@@ -10,6 +10,8 @@ import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Json.Encode as Encode
 import Table
+import Tree
+import TreeDiagram exposing (node)
 import Url
 import Url.Builder as UB
 
@@ -673,6 +675,19 @@ thtableDecoder =
 
 
 -- Tree
+
+
+constructTree thtable =
+    let
+        roots =
+            findRoot thtable
+    in
+    List.map (\r -> Tree.unfold unfolder r) roots
+
+
+unfolder : Theorem -> ( Theorem, List Theorem )
+unfolder th =
+    th
 
 
 findRoot thtable =
