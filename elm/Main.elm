@@ -678,6 +678,7 @@ thtableDecoder =
 -- Tree
 
 
+buildForest : List Theorem -> List (Tree.Tree Int)
 buildForest thtable =
     let
         roots =
