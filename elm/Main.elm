@@ -11,7 +11,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Json.Encode as Encode
 import Table
-import Graph.Tree as Tree
+import Graph.Tree
 import TreeView as Tv
 import Url
 import Url.Builder as UB
@@ -676,9 +676,9 @@ thtableDecoder =
 
 
 -- Tree
+viewTree=Tv.view
 
-
-buildForest : List Theorem -> List (Tree.Tree Int)
+buildForest : List Theorem -> List (Graph.Tree.Tree Int)
 buildForest thtable =
     let
         roots =
@@ -687,7 +687,7 @@ buildForest thtable =
         dthtable =
             dictThTable thtable
     in
-    List.map (\r -> Tree.unfoldTree (unfolder dthtable) r) roots
+    List.map (\r -> Graph.Tree.unfoldTree (unfolder dthtable) r) roots
 
 
 unfolder : Dict Int (List Int) -> Int -> ( Int, List Int )
