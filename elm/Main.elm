@@ -4,6 +4,7 @@ import Browser
 import Debug
 import Dict exposing (Dict)
 import Element as El exposing (Element, column, el, explain, fill, height, html, layout, row, width)
+import Graph.Tree
 import Html exposing (Html, button, div, h4, input, text)
 import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
@@ -11,7 +12,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Json.Encode as Encode
 import Table
-import Graph.Tree
+import Tree as TvTree
 import TreeView as Tv
 import Url
 import Url.Builder as UB
@@ -676,7 +677,27 @@ thtableDecoder =
 
 
 -- Tree
-viewTree=Tv.view
+
+
+viewTree =
+    Tv.view
+
+
+convertGraphTreeToTvTree : Graph.Tree.Tree Int -> TvTree.Node Int
+convertGraphTreeToTvTree gtree =
+    case Graph.Tree.root gtree of
+        Nothing ->
+            TvTree.Node { data = 0, children = [] }
+
+        Just ( label, [] ) ->
+            TvTree.Node { data = label, children = [] }
+
+        Just ( label, childForest ) ->
+            TvTree.Node
+                { data = label
+                , children = List.map convertGraphTreeToTvTree childForest
+                }
+
 
 buildForest : List Theorem -> List (Graph.Tree.Tree Int)
 buildForest thtable =
