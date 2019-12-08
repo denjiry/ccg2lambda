@@ -1,16 +1,17 @@
-module Main exposing (findRoot, main)
+module Main exposing (main)
 
 import Browser
 import Debug
 import Dict exposing (Dict)
 import Element as El exposing (Element, column, el, explain, fill, height, html, layout, row, width)
 import Graph.Tree
-import Html exposing (Html, button, div, h4, input, text)
+import Html exposing (Html, button, div, h4, input, map, text)
 import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
 import Json.Encode as Encode
+import List.Extra
 import Table
 import Tree as TvTree
 import TreeView as Tv
@@ -50,6 +51,7 @@ type alias Model =
     , formTryprove : FormTryprove
     , formGood : FormGood
     , formDelete : FormDelete
+    , treeModel : Tv.Model Node String Never ()
     }
 
 
@@ -94,6 +96,7 @@ type Msg
     | UpdateFormTryprove FormTryprove
     | UpdateFormGood FormGood
     | UpdateFormDelete FormDelete
+    | TreeViewMsg (Tv.Msg String)
 
 
 
@@ -102,7 +105,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete initialTreeModel
     , getAllTable
     )
 
@@ -132,6 +135,11 @@ initFormDelete =
     { table = "", id = "" }
 
 
+initialTreeModel : Tv.Model Node String Never ()
+initialTreeModel =
+    Tv.initializeModel configuration []
+
+
 
 --update
 
@@ -145,11 +153,20 @@ update msg model =
         GotTables result ->
             case result of
                 Ok alltable ->
-                    ( { model
-                        | jatable = alltable.jatable
-                        , lotable = alltable.lotable
-                        , thtable = alltable.thtable
-                        , msgRefreshTables = "success to fetch alltable"
+                    let
+                        newmodel =
+                            { model
+                                | jatable = alltable.jatable
+                                , lotable = alltable.lotable
+                                , thtable = alltable.thtable
+                                , msgRefreshTables = "success to fetch alltable"
+                            }
+
+                        rootNodes =
+                            buildRootNodes newmodel
+                    in
+                    ( { newmodel
+                        | treeModel = Tv.initializeModel configuration rootNodes
                       }
                     , Cmd.none
                     )
@@ -221,6 +238,9 @@ update msg model =
 
         UpdateFormDelete formDelete ->
             ( { model | formDelete = formDelete }, Cmd.none )
+
+        TreeViewMsg tvMsg ->
+            ( { model | treeModel = Tv.update tvMsg model.treeModel }, Cmd.none )
 
 
 handleHttpError : Http.Error -> String
@@ -679,24 +699,88 @@ thtableDecoder =
 -- Tree
 
 
-viewTree =
-    Tv.view
+type alias Node =
+    { uid : String
+    , ja : String
+    , lo : String
+    }
 
 
-convertGraphTreeToTvTree : Graph.Tree.Tree Int -> TvTree.Node Int
-convertGraphTreeToTvTree gtree =
+configuration : Tv.Configuration Node String
+configuration =
+    Tv.Configuration nodeUid nodeLabel Tv.defaultCssClasses
+
+
+viewTree : Tv.Model Node String Never () -> List Theorem -> Html Msg
+viewTree treeModel thtable =
+    div []
+        [ map TreeViewMsg <| Tv.view treeModel ]
+
+
+nodeLabel : TvTree.Node Node -> String
+nodeLabel n =
+    case n of
+        TvTree.Node node ->
+            node.data.ja ++ "|> " ++ node.data.lo
+
+
+nodeUid : TvTree.Node Node -> Tv.NodeUid String
+nodeUid n =
+    case n of
+        TvTree.Node node ->
+            -- if duplication occur, please use children's uid
+            Tv.NodeUid node.data.uid
+
+
+buildRootNodes : Model -> List (TvTree.Node Node)
+buildRootNodes model =
+    let
+        convert =
+            convertGraphTreeToTvTree model
+    in
+    List.map convert <| buildForest model.thtable
+
+
+convertGraphTreeToTvTree : Model -> Graph.Tree.Tree Int -> TvTree.Node Node
+convertGraphTreeToTvTree model gtree =
+    let
+        createNode id =
+            createNodeFromTables model.jatable model.lotable id
+    in
     case Graph.Tree.root gtree of
         Nothing ->
-            TvTree.Node { data = 0, children = [] }
+            TvTree.Node { data = { uid = "", ja = "", lo = "" }, children = [] }
 
         Just ( label, [] ) ->
-            TvTree.Node { data = label, children = [] }
+            TvTree.Node { data = createNode label, children = [] }
 
         Just ( label, childForest ) ->
             TvTree.Node
-                { data = label
-                , children = List.map convertGraphTreeToTvTree childForest
+                { data = createNode label
+                , children = List.map (\gt -> convertGraphTreeToTvTree model gt) childForest
                 }
+
+
+createNodeFromTables : List Japanese -> List Logic -> Int -> Node
+createNodeFromTables jatable lotable i =
+    let
+        logic =
+            case List.Extra.find (\l -> i == l.id) lotable of
+                Just l ->
+                    l
+
+                Nothing ->
+                    Logic 0 0 "" "" 0
+
+        japanese =
+            case List.Extra.find (\j -> logic.jid == j.id) jatable of
+                Just j ->
+                    j
+
+                Nothing ->
+                    Japanese 0 ""
+    in
+    { uid = String.fromInt i, ja = japanese.japanese, lo = logic.formula }
 
 
 buildForest : List Theorem -> List (Graph.Tree.Tree Int)
