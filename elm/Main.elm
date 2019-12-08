@@ -269,17 +269,21 @@ handleHttpError httperror =
 view : Model -> Element Msg
 view model =
     column []
-        [ column []
-            [ El.text model.msgRefreshTables
-            , html <| button [ onClick RefreshTables ] [ text "Refresh tables" ]
-            , El.text <| "Server Response -> " ++ model.message
-            , html <| viewRegJa model.formJa
-            , html <| viewRegLo model.formLogic
-            , html <| viewRegTh model.formTheorem
-            , html <| viewTrans model.formTransform
-            , html <| viewProve model.formTryprove
-            , html <| viewGood model.formGood
-            , html <| viewDelete model.formDelete
+        [ row []
+            [ column []
+                [ El.text model.msgRefreshTables
+                , html <| button [ onClick RefreshTables ] [ text "Refresh tables" ]
+                , El.text <| "Server Response -> " ++ model.message
+                , html <| viewRegJa model.formJa
+                , html <| viewRegLo model.formLogic
+                , html <| viewRegTh model.formTheorem
+                , html <| viewTrans model.formTransform
+                , html <| viewProve model.formTryprove
+                , html <| viewGood model.formGood
+                , html <| viewDelete model.formDelete
+                ]
+            , column []
+                [ html <| viewTree model.treeModel model.thtable ]
             ]
         , column
             [ width fill, height fill, El.scrollbarY ]
