@@ -725,7 +725,7 @@ nodeLabel : TvTree.Node Node -> String
 nodeLabel n =
     case n of
         TvTree.Node node ->
-            node.data.ja ++ "|> " ++ node.data.lo
+            node.data.ja ++ "|> " ++ prettifyFormula node.data.lo
 
 
 nodeUid : TvTree.Node Node -> Tv.NodeUid String
