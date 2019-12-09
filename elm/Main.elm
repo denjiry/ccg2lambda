@@ -707,6 +707,7 @@ type alias Node =
     { uid : String
     , ja : String
     , lo : String
+    , result : String
     }
 
 
@@ -748,7 +749,7 @@ buildRootNodes model =
     List.map convert <| buildForest model.thtable
 
 
-convertGraphTreeToTvTree : Model -> Graph.Tree.Tree Int -> TvTree.Node Node
+convertGraphTreeToTvTree : Model -> Graph.Tree.Tree Theorem -> TvTree.Node Node
 convertGraphTreeToTvTree model gtree =
     let
         createNode id =
@@ -790,20 +791,17 @@ createNodeFromTables jatable lotable i =
     { uid = String.fromInt i, ja = japanese.japanese, lo = logic.formula }
 
 
-buildForest : List Theorem -> List (Graph.Tree.Tree Int)
+buildForest : List Theorem -> List (Graph.Tree.Tree Theorem)
 buildForest thtable =
     let
         roots =
             findRoot thtable
-
-        dthtable =
-            dictThTable thtable
     in
-    List.map (\r -> Graph.Tree.unfoldTree (unfolder dthtable) r) roots
+    List.map (\r -> Graph.Tree.unfoldTree (unfolder thtable) r) roots
 
 
-unfolder : Dict Int (List Int) -> Int -> ( Int, List Int )
-unfolder dthtable seed =
+unfolder : List Theorem -> Theorem -> ( Theorem, List Theorem )
+unfolder thtable seed =
     case Dict.get seed dthtable of
         Just premises ->
             ( seed, premises )
@@ -812,23 +810,13 @@ unfolder dthtable seed =
             ( seed, [] )
 
 
-dictThTable : List Theorem -> Dict Int (List Int)
-dictThTable thtable =
-    let
-        extract th =
-            ( th.conclusion, toListInt th.premises )
-    in
-    Dict.fromList <| List.map extract thtable
-
-
-findRoot : List Theorem -> List Int
+findRoot : List Theorem -> List Theorem
 findRoot thtable =
     let
         allleaf =
             List.foldl (\th l -> toListInt th.premises ++ l) [] thtable
     in
     List.filter (\v -> not <| List.member v.conclusion allleaf) thtable
-        |> List.map (\th -> th.conclusion)
 
 
 toListInt : String -> List Int
