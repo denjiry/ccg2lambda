@@ -732,8 +732,11 @@ nodeUid : TvTree.Node Node -> Tv.NodeUid String
 nodeUid n =
     case n of
         TvTree.Node node ->
-            -- if duplication occur, please use children's uid
-            Tv.NodeUid node.data.uid
+            let
+                childrenUid =
+                    List.map (\child -> .uid <| TvTree.dataOf child) node.children
+            in
+            Tv.NodeUid <| node.data.uid ++ "_" ++ String.concat childrenUid
 
 
 buildRootNodes : Model -> List (TvTree.Node Node)
