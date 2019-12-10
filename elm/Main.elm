@@ -726,7 +726,15 @@ nodeLabel : TvTree.Node Node -> String
 nodeLabel n =
     case n of
         TvTree.Node node ->
-            node.data.ja ++ "|> " ++ prettifyFormula node.data.lo
+            let
+                prefix =
+                    if node.data.result == "proved" then
+                        ""
+
+                    else
+                        "[" ++ node.data.result ++ "]"
+            in
+            prefix ++ node.data.ja ++ "|> " ++ prettifyFormula node.data.lo
 
 
 nodeUid : TvTree.Node Node -> Tv.NodeUid String
@@ -752,25 +760,31 @@ buildRootNodes model =
 convertGraphTreeToTvTree : Model -> Graph.Tree.Tree Theorem -> TvTree.Node Node
 convertGraphTreeToTvTree model gtree =
     let
-        createNode id =
-            createNodeFromTables model.jatable model.lotable id
+        createNode id result =
+            createNodeFromTables model.jatable model.lotable id result
+
+        createLeaf premise =
+            TvTree.Node { data = createNode premise "認", children = [] }
     in
     case Graph.Tree.root gtree of
         Nothing ->
-            TvTree.Node { data = { uid = "", ja = "", lo = "" }, children = [] }
+            TvTree.Node { data = { uid = "", ja = "", lo = "", result = "" }, children = [] }
 
         Just ( label, [] ) ->
-            TvTree.Node { data = createNode label, children = [] }
+            TvTree.Node
+                { data = createNode label.conclusion label.result
+                , children = List.map createLeaf <| toListInt label.premises
+                }
 
         Just ( label, childForest ) ->
             TvTree.Node
-                { data = createNode label
+                { data = createNode label.conclusion label.result
                 , children = List.map (\gt -> convertGraphTreeToTvTree model gt) childForest
                 }
 
 
-createNodeFromTables : List Japanese -> List Logic -> Int -> Node
-createNodeFromTables jatable lotable i =
+createNodeFromTables : List Japanese -> List Logic -> Int -> String -> Node
+createNodeFromTables jatable lotable i result =
     let
         logic =
             case List.Extra.find (\l -> i == l.id) lotable of
@@ -778,7 +792,7 @@ createNodeFromTables jatable lotable i =
                     l
 
                 Nothing ->
-                    Logic 0 0 "" "" 0
+                    Logic 0 0 ("Not found:" ++ String.fromInt i) "" 0
 
         japanese =
             case List.Extra.find (\j -> logic.jid == j.id) jatable of
@@ -786,9 +800,9 @@ createNodeFromTables jatable lotable i =
                     j
 
                 Nothing ->
-                    Japanese 0 ""
+                    Japanese 0 ("Not found:" ++ String.fromInt i)
     in
-    { uid = String.fromInt i, ja = japanese.japanese, lo = logic.formula }
+    { uid = String.fromInt i, ja = japanese.japanese, lo = logic.formula, result = result }
 
 
 buildForest : List Theorem -> List (Graph.Tree.Tree Theorem)
