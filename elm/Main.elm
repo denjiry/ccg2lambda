@@ -802,12 +802,11 @@ buildForest thtable =
 
 unfolder : List Theorem -> Theorem -> ( Theorem, List Theorem )
 unfolder thtable seed =
-    case Dict.get seed dthtable of
-        Just premises ->
-            ( seed, premises )
-
-        Nothing ->
-            ( seed, [] )
+    let
+        premisesNumbers =
+            toListInt seed.premises
+    in
+    ( seed, List.filter (\th -> List.member th.conclusion premisesNumbers) thtable )
 
 
 findRoot : List Theorem -> List Theorem
