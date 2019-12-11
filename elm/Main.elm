@@ -704,7 +704,7 @@ thtableDecoder =
 
 
 type alias Node =
-    { uid : String
+    { uid : Int
     , ja : String
     , lo : String
     , result : String
@@ -742,10 +742,13 @@ nodeUid n =
     case n of
         TvTree.Node node ->
             let
+                uidString node_ =
+                    String.fromInt <| node_.uid
+
                 childrenUid =
-                    List.map (\child -> .uid <| TvTree.dataOf child) node.children
+                    List.map (\child -> uidString <| TvTree.dataOf child) node.children
             in
-            Tv.NodeUid <| node.data.uid ++ "_" ++ String.concat childrenUid
+            Tv.NodeUid <| uidString node.data ++ "_" ++ String.concat childrenUid
 
 
 buildRootNodes : Model -> List (TvTree.Node Node)
@@ -760,15 +763,18 @@ buildRootNodes model =
 convertGraphTreeToTvTree : Model -> Graph.Tree.Tree Theorem -> TvTree.Node Node
 convertGraphTreeToTvTree model gtree =
     let
+        leafPrefix =
+            "認"
+
         createNode id result =
             createNodeFromTables model.jatable model.lotable id result
 
         createLeaf premise =
-            TvTree.Node { data = createNode premise "認", children = [] }
+            TvTree.Node { data = createNode premise leafPrefix, children = [] }
     in
     case Graph.Tree.root gtree of
         Nothing ->
-            TvTree.Node { data = { uid = "", ja = "", lo = "", result = "" }, children = [] }
+            TvTree.Node { data = { uid = 0, ja = "", lo = "", result = "" }, children = [] }
 
         Just ( label, [] ) ->
             TvTree.Node
@@ -777,9 +783,26 @@ convertGraphTreeToTvTree model gtree =
                 }
 
         Just ( label, childForest ) ->
+            let
+                branchChildren =
+                    List.map (\gt -> convertGraphTreeToTvTree model gt) childForest
+
+                uidOfBranchChildren =
+                    List.map (.uid << TvTree.dataOf) branchChildren
+
+                leafs =
+                    toListInt label.premises
+                        |> List.filter (\p -> not <| List.member p uidOfBranchChildren)
+                        |> List.map (\p -> createNode p leafPrefix)
+                        |> List.map
+                            (\node ->
+                                TvTree.Node
+                                    { data = node, children = [] }
+                            )
+            in
             TvTree.Node
                 { data = createNode label.conclusion label.result
-                , children = List.map (\gt -> convertGraphTreeToTvTree model gt) childForest
+                , children = branchChildren ++ leafs
                 }
 
 
@@ -802,7 +825,7 @@ createNodeFromTables jatable lotable i result =
                 Nothing ->
                     Japanese 0 ("Not found:" ++ String.fromInt i)
     in
-    { uid = String.fromInt i, ja = japanese.japanese, lo = logic.formula, result = result }
+    { uid = i, ja = japanese.japanese, lo = logic.formula, result = result }
 
 
 buildForest : List Theorem -> List (Graph.Tree.Tree Theorem)
