@@ -52,6 +52,7 @@ type alias Model =
     , formGood : FormGood
     , formDelete : FormDelete
     , treeModel : Tv.Model Node String Never ()
+    , hideDetailForm : Bool
     }
 
 
@@ -97,6 +98,7 @@ type Msg
     | UpdateFormGood FormGood
     | UpdateFormDelete FormDelete
     | TreeViewMsg (Tv.Msg String)
+    | ToggleHideDetail
 
 
 
@@ -105,7 +107,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete initialTreeModel
+    ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete initialTreeModel True
     , getAllTable
     )
 
@@ -242,6 +244,9 @@ update msg model =
         TreeViewMsg tvMsg ->
             ( { model | treeModel = Tv.update tvMsg model.treeModel }, Cmd.none )
 
+        ToggleHideDetail ->
+            ( { model | hideDetailForm = not model.hideDetailForm }, Cmd.none )
+
 
 handleHttpError : Http.Error -> String
 handleHttpError httperror =
@@ -273,10 +278,24 @@ view model =
             [ column []
                 [ El.text model.msgRefreshTables
                 , html <| button [ onClick RefreshTables ] [ text "Refresh tables" ]
+                , html <|
+                    button [ onClick ToggleHideDetail ]
+                        [ text <|
+                            if model.hideDetailForm then
+                                "expand forms"
+
+                            else
+                                "hide detail"
+                        ]
                 , El.text <| "Server Response -> " ++ model.message
                 , html <| viewRegJa model.formJa
-                , html <| viewRegLo model.formLogic
-                , html <| viewRegTh model.formTheorem
+
+                -- , html <| viewRegLo model.formLogic
+                , if model.hideDetailForm then
+                    El.text ""
+
+                  else
+                    html <| viewRegTh model.formTheorem
                 , html <| viewTrans model.formTransform
                 , html <| viewProve model.formTryprove
                 , html <| viewGood model.formGood
