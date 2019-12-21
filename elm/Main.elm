@@ -209,16 +209,7 @@ update msg model =
             ( model, delete formDelete )
 
         Registered result ->
-            case result of
-                Ok message ->
-                    ( { model | message = message }
-                    , getAllTable
-                    )
-
-                Err err ->
-                    ( { model | message = "Http.Error:" ++ handleHttpError err }
-                    , Cmd.none
-                    )
+            registeredHelper model result
 
         UpdateFormJapanese japanese ->
             ( { model | formJa = japanese }, Cmd.none )
@@ -246,6 +237,20 @@ update msg model =
 
         ToggleHideDetail ->
             ( { model | hideDetailForm = not model.hideDetailForm }, Cmd.none )
+
+
+registeredHelper : Model -> Result Http.Error String -> ( Model, Cmd Msg )
+registeredHelper model result =
+    case result of
+        Ok message ->
+            ( { model | message = message }
+            , getAllTable
+            )
+
+        Err err ->
+            ( { model | message = "Http.Error:" ++ handleHttpError err }
+            , Cmd.none
+            )
 
 
 handleHttpError : Http.Error -> String
