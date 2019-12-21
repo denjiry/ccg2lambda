@@ -43,9 +43,29 @@ def _ex(query_str, arg_tuple):
 
 def register_japanese(japanese):
     assert isinstance(japanese, str)
-    success = _ex('INSERT INTO japanese (japanese) VALUES (?)',
+    dls, formulas_str = j2l(japanese)
+    _ex('INSERT INTO japanese (japanese) VALUES (?)',
+        (japanese,))
+    jid = japanese2jid(japanese)
+    rets = [register_formula(jid, f, dls) for f in set(formulas_str)]
+    if all(rets):
+        return True
+    else:
+        return rets
+
+
+def japanese2jid(japanese):
+    conn = connect(DBPATH)
+    c = conn.cursor()
+    try:
+        c.execute('SELECT id FROM japanese WHERE japanese = ?',
                   (japanese,))
-    return success
+        jid = c.fetchone()[0]
+        conn.close()
+    except Error as e:
+        conn.close()
+        return e
+    return jid
 
 
 def register_formula(jid, formula, types):
@@ -99,18 +119,6 @@ def fetch_japanese(jid):
         conn.close()
         return e
     return japanese
-
-
-def transform(jid):
-    japanese = fetch_japanese(jid)
-    if isinstance(japanese, Error):
-        return japanese  # as Exception
-    dls, formulas_str = j2l(japanese)
-    rets = [register_formula(jid, f, dls) for f in set(formulas_str)]
-    if all(rets):
-        return True
-    else:
-        return rets
 
 
 def fetch_formula(fid):
