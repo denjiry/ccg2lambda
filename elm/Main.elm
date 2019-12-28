@@ -47,7 +47,6 @@ type alias Model =
     , formJa : String
     , formLogic : FormLogic
     , formTheorem : FormTheorem
-    , formTransform : String
     , formTryprove : FormTryprove
     , formGood : FormGood
     , formDelete : FormDelete
@@ -85,7 +84,6 @@ type Msg
     | RegJapanese String
     | RegLogic FormLogic
     | RegTheorem FormTheorem
-    | Transform String
     | Tryprove FormTryprove
     | UpdateGood FormGood
     | Delete FormDelete
@@ -93,7 +91,6 @@ type Msg
     | UpdateFormJapanese String
     | UpdateFormLogic FormLogic
     | UpdateFormTheorem FormTheorem
-    | UpdateFormTransform String
     | UpdateFormTryprove FormTryprove
     | UpdateFormGood FormGood
     | UpdateFormDelete FormDelete
@@ -196,9 +193,6 @@ update msg model =
         RegTheorem formTheorem ->
             ( model, registerTheorem formTheorem )
 
-        Transform formTransform ->
-            ( model, transform formTransform )
-
         Tryprove formTryprove ->
             ( model, tryprove formTryprove )
 
@@ -219,9 +213,6 @@ update msg model =
 
         UpdateFormTheorem formTheorem ->
             ( { model | formTheorem = formTheorem }, Cmd.none )
-
-        UpdateFormTransform formTransform ->
-            ( { model | formTransform = formTransform }, Cmd.none )
 
         UpdateFormTryprove formTryprove ->
             ( { model | formTryprove = formTryprove }, Cmd.none )
@@ -301,7 +292,6 @@ view model =
 
                   else
                     html <| viewRegTh model.formTheorem
-                , html <| viewTrans model.formTransform
                 , html <| viewProve model.formTryprove
                 , html <| viewGood model.formGood
                 , html <| viewDelete model.formDelete
@@ -406,20 +396,6 @@ viewRegTh formTheorem =
             ]
             []
         , button [ onClick (RegTheorem formTheorem) ] [ text "Reg Theorem" ]
-        ]
-
-
-viewTrans : String -> Html Msg
-viewTrans formTransform =
-    div []
-        [ input
-            [ type_ "text"
-            , placeholder "日本語の ID"
-            , value formTransform
-            , onInput UpdateFormTransform
-            ]
-            []
-        , button [ onClick <| Transform formTransform ] [ text "日本語 -> 論理式" ]
         ]
 
 
