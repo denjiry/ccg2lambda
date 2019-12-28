@@ -45,7 +45,6 @@ type alias Model =
     , message : String
     , msgRefreshTables : String
     , formJa : String
-    , formLogic : FormLogic
     , formTheorem : FormTheorem
     , formTryprove : FormTryprove
     , formGood : FormGood
@@ -82,14 +81,12 @@ type Msg
     | SetLoTableState Table.State
     | SetThTableState Table.State
     | RegJapanese String
-    | RegLogic FormLogic
     | RegTheorem FormTheorem
     | Tryprove FormTryprove
     | UpdateGood FormGood
     | Delete FormDelete
     | Registered (Result Http.Error String)
     | UpdateFormJapanese String
-    | UpdateFormLogic FormLogic
     | UpdateFormTheorem FormTheorem
     | UpdateFormTryprove FormTryprove
     | UpdateFormGood FormGood
@@ -107,11 +104,6 @@ init _ =
     ( Model [] (Table.initialSort "id") [] (Table.initialSort "id") [] (Table.initialSort "id") "" "" "" initFormLogic initFormTheorem "" initFormTryprove initFormGood initFormDelete initialTreeModel True
     , getAllTable
     )
-
-
-initFormLogic : FormLogic
-initFormLogic =
-    { jid = "", formula = "", types = "" }
 
 
 initFormTheorem : FormTheorem
@@ -187,9 +179,6 @@ update msg model =
         RegJapanese japanese ->
             ( model, registerJapanese japanese )
 
-        RegLogic formLogic ->
-            ( model, registerLogic formLogic )
-
         RegTheorem formTheorem ->
             ( model, registerTheorem formTheorem )
 
@@ -207,9 +196,6 @@ update msg model =
 
         UpdateFormJapanese japanese ->
             ( { model | formJa = japanese }, Cmd.none )
-
-        UpdateFormLogic formLogic ->
-            ( { model | formLogic = formLogic }, Cmd.none )
 
         UpdateFormTheorem formTheorem ->
             ( { model | formTheorem = formTheorem }, Cmd.none )
@@ -285,8 +271,6 @@ view model =
                         ]
                 , El.text <| "Server Response -> " ++ model.message
                 , html <| viewRegJa model.formJa
-
-                -- , html <| viewRegLo model.formLogic
                 , if model.hideDetailForm then
                     El.text ""
 
@@ -339,35 +323,7 @@ viewRegJa formJa =
             , onInput UpdateFormJapanese
             ]
             []
-        , button [ onClick (RegJapanese formJa) ] [ text "Reg Japanese" ]
-        ]
-
-
-viewRegLo : FormLogic -> Html Msg
-viewRegLo formLogic =
-    div []
-        [ input
-            [ type_ "text"
-            , placeholder "元の日本語のID"
-            , value formLogic.jid
-            , onInput (\v -> UpdateFormLogic { formLogic | jid = v })
-            ]
-            []
-        , input
-            [ type_ "text"
-            , placeholder "論理式"
-            , value formLogic.formula
-            , onInput (\v -> UpdateFormLogic { formLogic | formula = v })
-            ]
-            []
-        , input
-            [ type_ "text"
-            , placeholder "types"
-            , value formLogic.types
-            , onInput (\v -> UpdateFormLogic { formLogic | types = v })
-            ]
-            []
-        , button [ onClick (RegLogic formLogic) ] [ text "Reg Logic" ]
+        , button [ onClick (RegJapanese formJa) ] [ text "日本語 -> 論理式" ]
         ]
 
 
