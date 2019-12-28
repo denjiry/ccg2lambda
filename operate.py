@@ -218,7 +218,7 @@ def dumptable(filename):
     alltable = {"jatable": japanese,
                 "lotable": logic_table,
                 "thtable": theorems}
-    alltablejs = json.dumps(alltable)
+    alltablejs = json.dumps(alltable, indent=4)
     with open(filename, 'w') as f:
         f.write(alltablejs)
     return
