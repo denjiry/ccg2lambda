@@ -4,3 +4,4 @@ __pycache__/
 *.glob
 *.vo
 elm-stuff/
+database/default.sqlite
