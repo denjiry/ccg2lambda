@@ -5,8 +5,8 @@ import Debug
 import Dict exposing (Dict)
 import Element as El exposing (Element, column, el, explain, fill, height, html, layout, row, width)
 import Graph.Tree
-import Html exposing (Html, button, div, h4, input, map, text)
-import Html.Attributes exposing (placeholder, type_, value)
+import Html exposing (Html, button, div, h4, input, map, text, textarea)
+import Html.Attributes exposing (placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, index, int, string)
@@ -256,61 +256,73 @@ handleHttpError httperror =
 view : Model -> Element Msg
 view model =
     column []
-        [ row []
-            [ column []
-                [ El.text model.msgRefreshTables
-                , html <| button [ onClick RefreshTables ] [ text "Refresh tables" ]
-                , html <|
-                    button [ onClick ToggleHideDetail ]
-                        [ text <|
-                            if model.hideDetailForm then
-                                "expand forms"
-
-                            else
-                                "hide detail"
-                        ]
-                , El.text <| "Server Response -> " ++ model.message
-                , html <| viewRegJa model.formJa
-                , if model.hideDetailForm then
-                    El.text ""
-
-                  else
-                    html <| viewRegTh model.formTheorem
-                , html <| viewProve model.formTryprove
-                , html <| viewGood model.formGood
-                , html <| viewDelete model.formDelete
+        [ html <|
+            textarea
+                [ style "height" "100px"
+                , style "width" "1000px"
+                , value
+                    "「ソクラテスは死ぬ。」かつ「すべての人間は死ぬ。」ならば「ソクラテスは死ぬ。」"
                 ]
-            , column []
-                [ html <| viewTree model.treeModel model.thtable ]
-            ]
-        , column
-            [ width fill, height fill, El.scrollbarY ]
-            [ row [ width fill ]
-                [ column []
-                    [ El.text "日本語テーブル(japanese)"
-                    , html <|
-                        Table.view jaconfig
-                            model.jaState
-                            model.jatable
-                    ]
-                , column [ height fill ]
-                    [ El.text "定理テーブル(theorem)"
-                    , html <|
-                        Table.view thconfig
-                            model.thState
-                            model.thtable
-                    ]
-                ]
-            , column [ width fill, El.clip ]
-                [ El.text "論理式テーブル(logic)"
-                , el [ El.clip ] <|
-                    El.html <|
-                        Table.view loconfig
-                            model.loState
-                            model.lotable
-                ]
-            ]
+                []
+        , html <| viewTree model.treeModel model.thtable
         ]
+
+
+
+-- column []
+--     [ row []
+--         [ column []
+--             [ El.text model.msgRefreshTables
+--             , html <| button [ onClick RefreshTables ] [ text "Refresh tables" ]
+--             , html <|
+--                 button [ onClick ToggleHideDetail ]
+--                     [ text <|
+--                         if model.hideDetailForm then
+--                             "expand forms"
+--                         else
+--                             "hide detail"
+--                     ]
+--             , El.text <| "Server Response -> " ++ model.message
+--             , html <| viewRegJa model.formJa
+--             , if model.hideDetailForm then
+--                 El.text ""
+--               else
+--                 html <| viewRegTh model.formTheorem
+--             , html <| viewProve model.formTryprove
+--             , html <| viewGood model.formGood
+--             , html <| viewDelete model.formDelete
+--             ]
+--         , column []
+--             [ html <| viewTree model.treeModel model.thtable ]
+--         ]
+-- , column
+--     [ width fill, height fill, El.scrollbarY ]
+--     [ row [ width fill ]
+--         [ column []
+--             [ El.text "日本語テーブル(japanese)"
+--             , html <|
+--                 Table.view jaconfig
+--                     model.jaState
+--                     model.jatable
+--             ]
+--         , column [ height fill ]
+--             [ El.text "定理テーブル(theorem)"
+--             , html <|
+--                 Table.view thconfig
+--                     model.thState
+--                     model.thtable
+--             ]
+--         ]
+--     , column [ width fill, El.clip ]
+--         [ El.text "論理式テーブル(logic)"
+--         , el [ El.clip ] <|
+--             El.html <|
+--                 Table.view loconfig
+--                     model.loState
+--                     model.lotable
+--         ]
+--     ]
+-- ]
 
 
 viewRegJa : String -> Html Msg
